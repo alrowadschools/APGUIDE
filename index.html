@@ -823,23 +823,8 @@ background: rgba(168, 85, 247, 0.18);
     </div>
 
     <div class="container">
- 
-
-                
-
-        <button class="btn-drive" onclick="loadPCPDF()">
-            <svg width="20" height="20" viewBox="0 0 24 24">
-                <path fill="currentColor" d="M4 6l8.5 12H15L6.5 6H4m2.5 0L13 12h5.5L12 2 6.5 6M18.5 6H22l-8.5 12h3L18.5 6z"/>
-            </svg>
-            UPLOAD📁
-        </button>
-
-    </div>
-</div>
-
-      
-                        
-            <!-- Week PDF Loading Buttons -->
+        <!-- Week Loading Buttons -->
+        <div class="action-buttons">
             <button class="btn-drive" onclick="loadWeekPDF(1)">
                 <svg width="20" height="20" viewBox="0 0 24 24">
                     <path fill="currentColor" d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
@@ -858,7 +843,14 @@ background: rgba(168, 85, 247, 0.18);
                 </svg>
                 WEEK 3
             </button>
-        
+        </div>
+
+        <button class="btn-drive" onclick="loadPCPDF()">
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M4 6l8.5 12H15L6.5 6H4m2.5 0L13 12h5.5L12 2 6.5 6M18.5 6H22l-8.5 12h3L18.5 6z"/>
+            </svg>
+            UPLOAD📁
+        </button>
 
         <!-- PDF Viewer -->
         <div class="pdf-viewer-container" id="pdf-viewer-container"style="display:none;">
@@ -919,21 +911,21 @@ background: rgba(168, 85, 247, 0.18);
             <input type="file" id="file-input" accept=".pdf,application/pdf">
         </div>
 
-        <!-- View Extracted Content Buttons -->
-        <div style="text-align: center; margin-bottom: 30px;">
-            <button class="btn-view-extracted" id="extract-week-1" onclick="extractWeek(1)" disabled>
+        <!-- Week Extraction Buttons -->
+        <div class="action-buttons">
+            <button class="btn-view-extracted" id="extract-week-1-btn" onclick="extractWeek(1)" disabled>
                 <svg width="20" height="20" viewBox="0 0 24 24">
                     <path fill="currentColor" d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"/>
                 </svg>
                 Extract Week 1
             </button>
-            <button class="btn-view-extracted" id="extract-week-2" onclick="extractWeek(2)" disabled>
+            <button class="btn-view-extracted" id="extract-week-2-btn" onclick="extractWeek(2)" disabled>
                 <svg width="20" height="20" viewBox="0 0 24 24">
                     <path fill="currentColor" d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"/>
                 </svg>
                 Extract Week 2
             </button>
-            <button class="btn-view-extracted" id="extract-week-3" onclick="extractWeek(3)" disabled>
+            <button class="btn-view-extracted" id="extract-week-3-btn" onclick="extractWeek(3)" disabled>
                 <svg width="20" height="20" viewBox="0 0 24 24">
                     <path fill="currentColor" d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"/>
                 </svg>
@@ -973,12 +965,14 @@ background: rgba(168, 85, 247, 0.18);
     let canvases = [];
     let isExtracting = false;
     let pdfFileName = 'Extracted PDF';
-    let currentWeek = null; // Track current week
     
     // Modal State
     let modalCurrentPage = 1;
     let modalTotalPages = 0;
     let modalPagesContainer = null;
+
+    // Week tracking
+    let currentWeek = null;
 
     // DOM Elements
     const dropZone = document.getElementById('drop-zone');
@@ -998,6 +992,13 @@ background: rgba(168, 85, 247, 0.18);
     const modalPrevBtn = document.getElementById('modal-prev-btn');
     const modalNextBtn = document.getElementById('modal-next-btn');
     const modalPageInfo = document.getElementById('modal-page-info');
+
+    // Week file paths
+    const weekFiles = {
+        1: 'APCSP PDF WEEK FILES/APCSP WEEK 1.pdf',
+        2: 'APCSP PDF WEEK FILES/APCSP WEEK 2.pdf',
+        3: 'APCSP PDF WEEK FILES/APCSP WEEK 3.pdf'
+    };
 
     // Set worker source
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.worker.min.js';
@@ -1023,6 +1024,7 @@ background: rgba(168, 85, 247, 0.18);
         const file = e.dataTransfer.files[0];
         if (file && file.type === 'application/pdf') {
             pdfFileName = file.name.replace('.pdf', '');
+            currentWeek = null; // Reset week when loading custom file
             loadAndProcessFile(file);
         } else {
             alert('Please drop a valid PDF file');
@@ -1033,14 +1035,8 @@ background: rgba(168, 85, 247, 0.18);
         const file = e.target.files[0];
         if (file) {
             pdfFileName = file.name.replace('.pdf', '');
+            currentWeek = null; // Reset week when loading custom file
             loadAndProcessFile(file);
-        }
-    });
-
-    // Allow Enter key to trigger URL loading
-    pdfUrlInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            loadURLPDF();
         }
     });
 
@@ -1059,75 +1055,19 @@ background: rgba(168, 85, 247, 0.18);
 
     // Auto-upload and display "Data Analysis.pdf" on page load
     document.addEventListener('DOMContentLoaded', async () => {
-        // Don't auto-load on page load to avoid the error
-        // Just show a message that user can load files manually
         console.log('PDF Extractor is ready. Use the buttons above to load PDFs.');
     });
 
-    // Load and process file
-    async function loadAndProcessFile(file) {
-        try {
-            const arrayBuffer = await file.arrayBuffer();
-            await loadAndProcessPDF(arrayBuffer, file.name);
-        } catch (error) {
-            console.error('Error loading file:', error);
-            alert('Error loading PDF: ' + error.message);
-            showEmptyState();
-        }
-    }
-
-    // Load PDF from any URL (with CORS proxy)
-    async function loadURLPDF() {
-        const url = pdfUrlInput.value.trim();
-        if (!url) {
-            alert('Please enter a PDF URL');
+    // Load specific week PDF
+    async function loadWeekPDF(weekNumber) {
+        currentWeek = weekNumber;
+        const filePath = weekFiles[weekNumber];
+        
+        if (!filePath) {
+            alert(`Week ${weekNumber} file not configured`);
             return;
         }
         
-        try {
-            // Use CORS proxy for Google Drive or any other URL
-            const proxyUrl = 'https://corsproxy.io/?';
-            const directUrl = await getDirectDownloadUrl(url);
-            const finalUrl = proxyUrl + encodeURIComponent(directUrl);
-            
-            console.log('Fetching from:', finalUrl);
-            
-            const response = await fetch(finalUrl, {
-                headers: {
-                    'Accept': 'application/pdf',
-                    'Content-Type': 'application/pdf'
-                }
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Failed to fetch PDF: ${response.status} ${response.statusText}`);
-            }
-            
-            const arrayBuffer = await response.arrayBuffer();
-            pdfFileName = 'Extracted PDF';
-            await loadAndProcessPDF(arrayBuffer, 'PDF from URL');
-            
-        } catch (error) {
-            console.error('Error loading PDF from URL:', error);
-            
-            // Try alternative approach without proxy
-            try {
-                await tryAlternativeDownload(url);
-            } catch (fallbackError) {
-                alert('Error loading PDF: ' + error.message + '\n\nPlease ensure the PDF is publicly accessible.');
-                showEmptyState();
-            }
-        }
-    }
-
-    // Load default Google Drive PDF
-    async function loadDefaultGoogleDrivePDF() {
-        pdfUrlInput.value = 'https://drive.google.com/file/d/1SHkgFqLFZ5xH4We362Mkx80Q1W4M0Ell/view?usp=sharing';
-        await loadURLPDF();
-    }
-
-    // NEW: Load specific week PDF
-    async function loadWeekPDF(weekNumber) {
         try {
             // Show extraction status
             showExtractionStatus(`Loading Week ${weekNumber} PDF...`);
@@ -1138,32 +1078,55 @@ background: rgba(168, 85, 247, 0.18);
             statsBar.style.display = 'none';
             
             // Disable all extract buttons initially
-            for (let i = 1; i <= 3; i++) {
-                document.getElementById(`extract-week-${i}`).disabled = true;
+            disableAllExtractButtons();
+            
+            // Enable the corresponding extract button
+            const extractBtn = document.getElementById(`extract-week-${weekNumber}-btn`);
+            if (extractBtn) {
+                extractBtn.disabled = false;
             }
             
-            // Set current week
-            currentWeek = weekNumber;
+            // Try to load from the specified path
+            console.log(`Loading Week ${weekNumber} from: ${filePath}`);
+            const response = await fetch(filePath);
             
-            // Define the file path
-            const pdfPath = `APCSP PDF WEEK FILES/APCSP WEEK ${weekNumber}.pdf`;
+            if (!response.ok) {
+                throw new Error(`Failed to load Week ${weekNumber} PDF: ${response.status} ${response.statusText}`);
+            }
             
-            // Try different possible locations for the file
-            const possiblePaths = [
-                pdfPath,
-                `./${pdfPath}`,
-                `../${pdfPath}`,
-                `pdf/${pdfPath}`,
-                `files/${pdfPath}`
+            const arrayBuffer = await response.arrayBuffer();
+            pdfFileName = `APCSP WEEK ${weekNumber}`;
+            
+            // Update dropzone to show loading
+            dropZone.innerHTML = `
+                <div class="upload-icon">📄</div>
+                <div><strong>${pdfFileName}</strong></div>
+                <div class="file-info" style="color: #4CAF50;">Loading PDF...</div>
+            `;
+            dropZone.classList.add('file-loaded');
+            
+            // Use the existing function to load and process the PDF
+            await loadAndProcessPDF(arrayBuffer, pdfFileName);
+            
+        } catch (error) {
+            console.error(`Error loading Week ${weekNumber} PDF:`, error);
+            
+            // Try alternative paths
+            const alternativePaths = [
+                filePath,
+                `./${filePath}`,
+                filePath.replace('APCSP PDF WEEK FILES/', ''),
+                `pdf/${filePath}`,
+                `files/${filePath}`
             ];
             
             let arrayBuffer = null;
             let foundPath = null;
             
             // Try each possible path
-            for (const path of possiblePaths) {
+            for (const path of alternativePaths) {
                 try {
-                    console.log(`Trying to load from: ${path}`);
+                    console.log(`Trying alternative path: ${path}`);
                     const response = await fetch(path);
                     if (response.ok) {
                         arrayBuffer = await response.arrayBuffer();
@@ -1178,54 +1141,70 @@ background: rgba(168, 85, 247, 0.18);
             }
             
             if (!arrayBuffer) {
-                // If file not found, ask user to upload it manually
-                const userConfirmed = confirm(
-                    `APCSP WEEK ${weekNumber}.pdf not found in the expected locations.\n\n` +
-                    'Please ensure the file is in the "APCSP PDF WEEK FILES" folder.\n\n' +
-                    'Alternatively, you can:\n' +
-                    '1. Click OK to select the file manually from your computer\n' +
-                    '2. Click Cancel to use the upload button instead'
-                );
+                alert(`Week ${weekNumber} PDF not found.\n\nPlease ensure the file "${filePath}" exists in the correct location.`);
+                hideExtractionStatus();
                 
-                if (userConfirmed) {
-                    // Trigger file input for manual selection
-                    fileInput.click();
-                    return;
-                } else {
-                    hideExtractionStatus();
-                    return;
-                }
+                // Reset dropzone
+                dropZone.innerHTML = `
+                    <div class="upload-icon">📁</div>
+                    <div>Drag & Drop PDF file here</div>
+                    <div class="file-info">or click to browse</div>
+                `;
+                dropZone.classList.remove('file-loaded');
+                return;
             }
             
-            // Set the file name
+            // Continue with loading if found
             pdfFileName = `APCSP WEEK ${weekNumber}`;
             
-            // Update dropzone to show loading
+            // Update dropzone to show loaded file
             dropZone.innerHTML = `
-                <div class="upload-icon">📄</div>
+                <div class="upload-icon">✅</div>
                 <div><strong>${pdfFileName}</strong></div>
-                <div class="file-info" style="color: #4CAF50;">Loading PDF from ${foundPath}...</div>
+                <div class="file-info" style="color: #4CAF50;">PDF loaded successfully from ${foundPath}</div>
             `;
             dropZone.classList.add('file-loaded');
             
             // Use the existing function to load and process the PDF
             await loadAndProcessPDF(arrayBuffer, pdfFileName);
-            
-            // Enable the extract button for this week
-            document.getElementById(`extract-week-${weekNumber}`).disabled = false;
-            
+        }
+    }
+
+    // Extract content for specific week
+    function extractWeek(weekNumber) {
+        if (currentWeek !== weekNumber) {
+            alert(`Please load Week ${weekNumber} PDF first before extracting.`);
+            return;
+        }
+        
+        if (extractedContent.length === 0) {
+            alert('No content extracted yet. Please wait for extraction to complete.');
+            return;
+        }
+        
+        openModal();
+    }
+
+    // Disable all extract buttons
+    function disableAllExtractButtons() {
+        for (let i = 1; i <= 3; i++) {
+            const btn = document.getElementById(`extract-week-${i}-btn`);
+            if (btn) {
+                btn.disabled = true;
+            }
+        }
+    }
+
+    // Load and process file
+    async function loadAndProcessFile(file) {
+        try {
+            const arrayBuffer = await file.arrayBuffer();
+            currentWeek = null; // Reset week for custom files
+            await loadAndProcessPDF(arrayBuffer, file.name);
         } catch (error) {
-            console.error(`Error loading Week ${weekNumber} PDF:`, error);
-            alert('Error: ' + error.message + '\n\nPlease make sure the PDF file exists in the correct location.');
-            hideExtractionStatus();
-            
-            // Reset dropzone
-            dropZone.innerHTML = `
-                <div class="upload-icon">📁</div>
-                <div>Drag & Drop PDF file here</div>
-                <div class="file-info">or click to browse</div>
-            `;
-            dropZone.classList.remove('file-loaded');
+            console.error('Error loading file:', error);
+            alert('Error loading PDF: ' + error.message);
+            showEmptyState();
         }
     }
 
@@ -1245,6 +1224,17 @@ background: rgba(168, 85, 247, 0.18);
             clearCanvases();
             contentContainer.innerHTML = '';
             statsBar.style.display = 'none';
+            
+            // Disable all extract buttons initially
+            disableAllExtractButtons();
+            
+            // If this is a week PDF, enable its extract button
+            if (currentWeek) {
+                const extractBtn = document.getElementById(`extract-week-${currentWeek}-btn`);
+                if (extractBtn) {
+                    extractBtn.disabled = false;
+                }
+            }
             
             // Show extraction status
             showExtractionStatus('Loading PDF...');
@@ -1328,68 +1318,6 @@ background: rgba(168, 85, 247, 0.18);
     // Hide extraction status
     function hideExtractionStatus() {
         extractionStatus.classList.remove('active');
-    }
-
-    // Get direct download URL from Google Drive link
-    async function getDirectDownloadUrl(url) {
-        // If it's a Google Drive link, convert to direct download
-        if (url.includes('drive.google.com')) {
-            const fileId = extractGoogleDriveFileId(url);
-            return `https://drive.google.com/uc?export=download&id=${fileId}`;
-        }
-        return url;
-    }
-
-    // Extract Google Drive file ID from URL
-    function extractGoogleDriveFileId(url) {
-        // Handle different Google Drive URL formats
-        const patterns = [
-            /\/file\/d\/([a-zA-Z0-9_-]+)/,
-            /id=([a-zA-Z0-9_-]+)/,
-            /drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/
-        ];
-        
-        for (const pattern of patterns) {
-            const match = url.match(pattern);
-            if (match && match[1]) {
-                return match[1];
-            }
-        }
-        
-        // If no pattern matches, try to extract from the provided URL directly
-        const urlParts = url.split('/');
-        for (let i = 0; i < urlParts.length; i++) {
-            if (urlParts[i] === 'd' && i + 1 < urlParts.length) {
-                return urlParts[i + 1].split('?')[0].split('/')[0];
-            }
-        }
-        
-        throw new Error('Could not extract file ID from Google Drive URL');
-    }
-
-    // Alternative download method (for when CORS proxy fails)
-    async function tryAlternativeDownload(url) {
-        console.log('Trying alternative download method...');
-        
-        // Create an iframe to bypass CORS
-        return new Promise((resolve, reject) => {
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.src = url;
-            iframe.onload = () => {
-                console.log('Iframe loaded, but cannot access content due to CORS');
-                reject(new Error('CORS restrictions prevent direct access'));
-            };
-            iframe.onerror = () => {
-                reject(new Error('Failed to load PDF'));
-            };
-            document.body.appendChild(iframe);
-            
-            // Clean up
-            setTimeout(() => {
-                document.body.removeChild(iframe);
-            }, 10000);
-        });
     }
 
     // Display PDF in viewer - UPDATED to ensure PDF is rendered
@@ -1655,17 +1583,6 @@ background: rgba(168, 85, 247, 0.18);
         }
         
         return headings.length > 0 ? headings[0] : null; // Return first heading found
-    }
-
-    // Extract week content
-    function extractWeek(weekNumber) {
-        if (!extractedContent || extractedContent.length === 0) {
-            alert('No content extracted yet. Please wait for extraction to complete.');
-            return;
-        }
-        
-        // Open modal with extracted content
-        openModal();
     }
 
     // Modal Functions
