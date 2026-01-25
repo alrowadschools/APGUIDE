@@ -825,93 +825,45 @@ background: rgba(168, 85, 247, 0.18);
     <div class="container">
  
 
-        <!-- URL Input Section -->
-       <!-- URL Input Section -->
-<div class="url-input-container">
-    <div class="url-input-wrapper">
-        <input type="text" id="pdf-url" class="url-input" 
-               placeholder="Enter PDF URL or Google Drive link..." 
-               value="https://drive.google.com/file/d/1qzu_kS_9Vtun-hPUlGUKgGiYMeLpYDcm/view?usp=sharing">
-        
-        <!-- Week buttons with specific URLs -->
-        <button class="btn-drive" onclick="loadWeekPDF('https://drive.google.com/file/d/1qzu_kS_9Vtun-hPUlGUKgGiYMeLpYDcm/view?usp=sharing')">
-            <svg width="20" height="20" viewBox="0 0 24 24">
-                <path fill="currentColor" d="M4 6l8.5 12H15L6.5 6H4m2.5 0L13 12h5.5L12 2 6.5 6M18.5 6H22l-8.5 12h3L18.5 6z"/>
-            </svg>
-            WEEK 1
-        </button>
-
-        <button class="btn-drive" onclick="loadWeekPDF('https://drive.google.com/file/d/1FOqsjKt0xil8oHy-TYYGLQ_hyQFNtd77/view?usp=sharing')">
-            <svg width="20" height="20" viewBox="0 0 24 24">
-                <path fill="currentColor" d="M4 6l8.5 12H15L6.5 6H4m2.5 0L13 12h5.5L12 2 6.5 6M18.5 6H22l-8.5 12h3L18.5 6z"/>
-            </svg>
-            WEEK 2
-        </button>
-
-        <button class="btn-drive" onclick="loadWeekPDF('https://drive.google.com/file/d/1V5RClEUq2pxVMpa7vvxTjt0XZrTShcBs/view?usp=sharing')">
-            <svg width="20" height="20" viewBox="0 0 24 24">
-                <path fill="currentColor" d="M4 6l8.5 12H15L6.5 6H4m2.5 0L13 12h5.5L12 2 6.5 6M18.5 6H22l-8.5 12h3L18.5 6z"/>
-            </svg>
-            WEEK 3
-        </button>
-
-        <!-- Add more week buttons as needed -->
-        <button class="btn-drive" onclick="loadWeekPDF('')">
-            <svg width="20" height="20" viewBox="0 0 24 24">
-                <path fill="currentColor" d="M4 6l8.5 12H15L6.5 6H4m2.5 0L13 12h5.5L12 2 6.5 6M18.5 6H22l-8.5 12h3L18.5 6z"/>
-            </svg>
-            WEEK 4
-        </button>
-
-        <button class="btn-drive" onclick="loadWeekPDF('')">
-            <svg width="20" height="20" viewBox="0 0 24 24">
-                <path fill="currentColor" d="M4 6l8.5 12H15L6.5 6H4m2.5 0L13 12h5.5L12 2 6.5 6M18.5 6H22l-8.5 12h3L18.5 6z"/>
-            </svg>
-            WEEK 5
-        </button>
-
-        <button class="btn-drive" onclick="loadURLPDF()">
-            <svg width="20" height="20" viewBox="0 0 24 24">
-                <path fill="currentColor" d="M4 6l8.5 12H15L6.5 6H4m2.5 0L13 12h5.5L12 2 6.5 6M18.5 6H22l-8.5 12h3L18.5 6z"/>
-            </svg>
-            Load Custom URL
-        </button>
+                
 
         <button class="btn-drive" onclick="loadPCPDF()">
             <svg width="20" height="20" viewBox="0 0 24 24">
                 <path fill="currentColor" d="M4 6l8.5 12H15L6.5 6H4m2.5 0L13 12h5.5L12 2 6.5 6M18.5 6H22l-8.5 12h3L18.5 6z"/>
             </svg>
-            Load PDF from PC
+            UPLOAD📁
         </button>
 
     </div>
 </div>
 
-        <!-- Action Buttons -->
-        <div class="action-buttons">
-            <button class="btn-drive" onclick="loadDefaultGoogleDrivePDF()">
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                    <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                    <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                    <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                </svg>
-                Load Default Google Drive PDF
-            </button>
-            
-            <!-- NEW: Load Data Analysis PDF Button -->
-            <button class="btn-drive" onclick="loadDataAnalysisPDF()">
+      
+                        
+            <!-- Week PDF Loading Buttons -->
+            <button class="btn-drive" onclick="loadWeekPDF(1)">
                 <svg width="20" height="20" viewBox="0 0 24 24">
                     <path fill="currentColor" d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
                 </svg>
-                Load Data Analysis PDF
+                WEEK 1
             </button>
-        </div>
+            <button class="btn-drive" onclick="loadWeekPDF(2)">
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                </svg>
+                WEEK 2
+            </button>
+            <button class="btn-drive" onclick="loadWeekPDF(3)">
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                </svg>
+                WEEK 3
+            </button>
+        
 
         <!-- PDF Viewer -->
-        <div class="pdf-viewer-container" id="pdf-viewer-container">
-            <div class="viewer-header">
-                <div class="viewer-title">
+        <div class="pdf-viewer-container" id="pdf-viewer-container"style="display:none;">
+            <div class="viewer-header"style="display:none;">
+                <div class="viewer-title"style="display:none;">
                     <svg width="24" height="24" viewBox="0 0 24 24">
                         <path fill="currentColor" d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
                     </svg>
@@ -954,26 +906,38 @@ background: rgba(168, 85, 247, 0.18);
                     </button>
                 </div>
             </div>
-            <div class="pdf-js-viewer-container">
-                <div id="pdf-canvas-container"></div>
+            <div class="pdf-js-viewer-container"style="display:none;">
+                <div id="pdf-canvas-container"style="display:none;"></div>
             </div>
         </div>
 
         <!-- Existing drop zone -->
-        <div class="drop-zone" id="drop-zone">
+        <div class="drop-zone" id="drop-zone"style="display:none;">
             <div class="drop-zone-icon">📁</div>
             <div class="drop-zone-text">Drop your PDF here or click to browse</div>
             <div class="drop-zone-hint">Supports PDF files up to 50MB</div>
             <input type="file" id="file-input" accept=".pdf,application/pdf">
         </div>
 
-        <!-- View Extracted Content Button -->
+        <!-- View Extracted Content Buttons -->
         <div style="text-align: center; margin-bottom: 30px;">
-            <button class="btn-view-extracted" id="view-extracted-btn" onclick="openModal()" disabled>
+            <button class="btn-view-extracted" id="extract-week-1" onclick="extractWeek(1)" disabled>
                 <svg width="20" height="20" viewBox="0 0 24 24">
                     <path fill="currentColor" d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"/>
                 </svg>
-                View Extracted Content
+                Extract Week 1
+            </button>
+            <button class="btn-view-extracted" id="extract-week-2" onclick="extractWeek(2)" disabled>
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"/>
+                </svg>
+                Extract Week 2
+            </button>
+            <button class="btn-view-extracted" id="extract-week-3" onclick="extractWeek(3)" disabled>
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"/>
+                </svg>
+                Extract Week 3
             </button>
         </div>
 
@@ -1009,6 +973,7 @@ background: rgba(168, 85, 247, 0.18);
     let canvases = [];
     let isExtracting = false;
     let pdfFileName = 'Extracted PDF';
+    let currentWeek = null; // Track current week
     
     // Modal State
     let modalCurrentPage = 1;
@@ -1028,7 +993,6 @@ background: rgba(168, 85, 247, 0.18);
     const extractionStatus = document.getElementById('extraction-status');
     const statusText = document.getElementById('status-text');
     const statusBar = document.getElementById('status-bar');
-    const viewExtractedBtn = document.getElementById('view-extracted-btn');
     const modal = document.getElementById('extracted-content-modal');
     const modalPagesContainerElem = document.getElementById('modal-pages-container');
     const modalPrevBtn = document.getElementById('modal-prev-btn');
@@ -1162,26 +1126,35 @@ background: rgba(168, 85, 247, 0.18);
         await loadURLPDF();
     }
 
-    // NEW: Load Data Analysis PDF from same folder
-    async function loadDataAnalysisPDF() {
+    // NEW: Load specific week PDF
+    async function loadWeekPDF(weekNumber) {
         try {
             // Show extraction status
-            showExtractionStatus('Loading Data Analysis.pdf...');
+            showExtractionStatus(`Loading Week ${weekNumber} PDF...`);
             
             // Clear any existing content
             clearCanvases();
             contentContainer.innerHTML = '';
             statsBar.style.display = 'none';
-            viewExtractedBtn.disabled = true;
+            
+            // Disable all extract buttons initially
+            for (let i = 1; i <= 3; i++) {
+                document.getElementById(`extract-week-${i}`).disabled = true;
+            }
+            
+            // Set current week
+            currentWeek = weekNumber;
+            
+            // Define the file path
+            const pdfPath = `APCSP PDF WEEK FILES/APCSP WEEK ${weekNumber}.pdf`;
             
             // Try different possible locations for the file
             const possiblePaths = [
-                'Data Analysis.pdf',
-                './Data Analysis.pdf',
-                'data/Data Analysis.pdf',
-                'pdf/Data Analysis.pdf',
-                'files/Data Analysis.pdf',
-                '../Data Analysis.pdf'
+                pdfPath,
+                `./${pdfPath}`,
+                `../${pdfPath}`,
+                `pdf/${pdfPath}`,
+                `files/${pdfPath}`
             ];
             
             let arrayBuffer = null;
@@ -1207,13 +1180,11 @@ background: rgba(168, 85, 247, 0.18);
             if (!arrayBuffer) {
                 // If file not found, ask user to upload it manually
                 const userConfirmed = confirm(
-                    'Data Analysis.pdf not found in the expected locations.\n\n' +
-                    'Please ensure the file is named "Data Analysis.pdf" and is in one of these locations:\n' +
-                    '- Same folder as this HTML file\n' +
-                    '- In a "data" or "pdf" subfolder\n\n' +
+                    `APCSP WEEK ${weekNumber}.pdf not found in the expected locations.\n\n` +
+                    'Please ensure the file is in the "APCSP PDF WEEK FILES" folder.\n\n' +
                     'Alternatively, you can:\n' +
                     '1. Click OK to select the file manually from your computer\n' +
-                    '2. Click Cancel to use one of the sample PDFs instead'
+                    '2. Click Cancel to use the upload button instead'
                 );
                 
                 if (userConfirmed) {
@@ -1221,21 +1192,18 @@ background: rgba(168, 85, 247, 0.18);
                     fileInput.click();
                     return;
                 } else {
-                    // Load a sample PDF instead
-                    alert('Loading a sample PDF instead. Use the "Load PDF from PC" button to load your own PDF.');
-                    pdfUrlInput.value = 'https://drive.google.com/file/d/1qzu_kS_9Vtun-hPUlGUKgGiYMeLpYDcm/view?usp=sharing';
-                    await loadURLPDF();
+                    hideExtractionStatus();
                     return;
                 }
             }
             
             // Set the file name
-            pdfFileName = 'Data Analysis';
+            pdfFileName = `APCSP WEEK ${weekNumber}`;
             
             // Update dropzone to show loading
             dropZone.innerHTML = `
                 <div class="upload-icon">📄</div>
-                <div><strong>Data Analysis.pdf</strong></div>
+                <div><strong>${pdfFileName}</strong></div>
                 <div class="file-info" style="color: #4CAF50;">Loading PDF from ${foundPath}...</div>
             `;
             dropZone.classList.add('file-loaded');
@@ -1243,18 +1211,12 @@ background: rgba(168, 85, 247, 0.18);
             // Use the existing function to load and process the PDF
             await loadAndProcessPDF(arrayBuffer, pdfFileName);
             
+            // Enable the extract button for this week
+            document.getElementById(`extract-week-${weekNumber}`).disabled = false;
+            
         } catch (error) {
-            console.error('Error loading Data Analysis.pdf:', error);
-            
-            // Try to load from Google Drive as fallback
-            try {
-                alert('Local file not found. Trying to load from Google Drive...');
-                pdfUrlInput.value = 'https://drive.google.com/file/d/1SHkgFqLFZ5xH4We362Mkx80Q1W4M0Ell/view?usp=sharing';
-                await loadURLPDF();
-            } catch (driveError) {
-                alert('Error: ' + error.message + '\n\nPlease make sure "Data Analysis.pdf" is in the same folder as this HTML file.');
-            }
-            
+            console.error(`Error loading Week ${weekNumber} PDF:`, error);
+            alert('Error: ' + error.message + '\n\nPlease make sure the PDF file exists in the correct location.');
             hideExtractionStatus();
             
             // Reset dropzone
@@ -1266,20 +1228,6 @@ background: rgba(168, 85, 247, 0.18);
             dropZone.classList.remove('file-loaded');
         }
     }
-
-// Load specific week PDF
-async function loadWeekPDF(url) {
-    if (!url) {
-        alert('URL not configured for this week');
-        return;
-    }
-    
-    // Update the URL input with the week's URL
-    pdfUrlInput.value = url;
-    
-    // Load the PDF using existing function
-    await loadURLPDF();
-}
 
     // Load PDF from PC
     async function loadPCPDF() {
@@ -1297,7 +1245,6 @@ async function loadWeekPDF(url) {
             clearCanvases();
             contentContainer.innerHTML = '';
             statsBar.style.display = 'none';
-            viewExtractedBtn.disabled = true;
             
             // Show extraction status
             showExtractionStatus('Loading PDF...');
@@ -1346,9 +1293,6 @@ async function loadWeekPDF(url) {
             // Update UI with extracted content
             updateStats(totalPages);
             renderContent();
-            
-            // Enable the view extracted button
-            viewExtractedBtn.disabled = false;
             
             // Hide extraction status
             setTimeout(() => {
@@ -1711,6 +1655,17 @@ async function loadWeekPDF(url) {
         }
         
         return headings.length > 0 ? headings[0] : null; // Return first heading found
+    }
+
+    // Extract week content
+    function extractWeek(weekNumber) {
+        if (!extractedContent || extractedContent.length === 0) {
+            alert('No content extracted yet. Please wait for extraction to complete.');
+            return;
+        }
+        
+        // Open modal with extracted content
+        openModal();
     }
 
     // Modal Functions
