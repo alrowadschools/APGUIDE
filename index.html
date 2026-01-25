@@ -845,12 +845,22 @@ background: rgba(168, 85, 247, 0.18);
             </button>
         </div>
 
-        <button class="btn-drive" onclick="loadPCPDF()">
-            <svg width="20" height="20" viewBox="0 0 24 24">
-                <path fill="currentColor" d="M4 6l8.5 12H15L6.5 6H4m2.5 0L13 12h5.5L12 2 6.5 6M18.5 6H22l-8.5 12h3L18.5 6z"/>
-            </svg>
-            UPLOAD📁
-        </button>
+        <!-- Upload and General Extract Button -->
+        <div class="action-buttons">
+            <button class="btn-drive" onclick="loadPCPDF()">
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M4 6l8.5 12H15L6.5 6H4m2.5 0L13 12h5.5L12 2 6.5 6M18.5 6H22l-8.5 12h3L18.5 6z"/>
+                </svg>
+                UPLOAD📁
+            </button>
+            
+            <button class="btn-view-extracted" id="general-extract-btn" onclick="extractGeneralPDF()" disabled>
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"/>
+                </svg>
+                EXTRACT
+            </button>
+        </div>
 
         <!-- PDF Viewer -->
         <div class="pdf-viewer-container" id="pdf-viewer-container"style="display:none;">
@@ -934,17 +944,17 @@ background: rgba(168, 85, 247, 0.18);
         </div>
 
         <div class="stats-bar" id="stats-bar" style="display: none;">
-            <div class="stat-item">
-                <div class="stat-value" id="stat-pages">0</div>
-                <div class="stat-label">Pages</div>
+            <div class="stat-item"style="display: none;">
+                <div class="stat-value" id="stat-pages"style="display: none;">0</div>
+                <div class="stat-label"style="display: none;">Pages</div>
             </div>
-            <div class="stat-item">
-                <div class="stat-value" id="stat-text">0</div>
-                <div class="stat-label">Text Blocks</div>
+            <div class="stat-item"style="display: none;">
+                <div class="stat-value" id="stat-text"style="display: none;">0</div>
+                <div class="stat-label"style="display: none;">Text Blocks</div>
             </div>
-            <div class="stat-item">
-                <div class="stat-value" id="stat-images">0</div>
-                <div class="stat-label">Images</div>
+            <div class="stat-item"style="display: none;">
+                <div class="stat-value" id="stat-images"style="display: none;">0</div>
+                <div class="stat-label"style="display: none;">Images</div>
             </div>
         </div>
 
@@ -973,6 +983,7 @@ background: rgba(168, 85, 247, 0.18);
 
     // Week tracking
     let currentWeek = null;
+    let isCustomFileUploaded = false; // Track if file was uploaded via file dialog
 
     // DOM Elements
     const dropZone = document.getElementById('drop-zone');
@@ -982,7 +993,6 @@ background: rgba(168, 85, 247, 0.18);
     const pdfViewerContainer = document.getElementById('pdf-viewer-container');
     const currentPageInput = document.getElementById('current-page');
     const totalPagesSpan = document.getElementById('total-pages');
-    const pdfUrlInput = document.getElementById('pdf-url');
     const zoomLevelSpan = document.getElementById('zoom-level');
     const extractionStatus = document.getElementById('extraction-status');
     const statusText = document.getElementById('status-text');
@@ -992,6 +1002,7 @@ background: rgba(168, 85, 247, 0.18);
     const modalPrevBtn = document.getElementById('modal-prev-btn');
     const modalNextBtn = document.getElementById('modal-next-btn');
     const modalPageInfo = document.getElementById('modal-page-info');
+    const generalExtractBtn = document.getElementById('general-extract-btn');
 
     // Week file paths
     const weekFiles = {
@@ -1025,6 +1036,7 @@ background: rgba(168, 85, 247, 0.18);
         if (file && file.type === 'application/pdf') {
             pdfFileName = file.name.replace('.pdf', '');
             currentWeek = null; // Reset week when loading custom file
+            isCustomFileUploaded = true;
             loadAndProcessFile(file);
         } else {
             alert('Please drop a valid PDF file');
@@ -1036,6 +1048,7 @@ background: rgba(168, 85, 247, 0.18);
         if (file) {
             pdfFileName = file.name.replace('.pdf', '');
             currentWeek = null; // Reset week when loading custom file
+            isCustomFileUploaded = true; // Mark as custom file upload
             loadAndProcessFile(file);
         }
     });
@@ -1061,6 +1074,8 @@ background: rgba(168, 85, 247, 0.18);
     // Load specific week PDF
     async function loadWeekPDF(weekNumber) {
         currentWeek = weekNumber;
+        isCustomFileUploaded = false; // Not a custom file upload
+        
         const filePath = weekFiles[weekNumber];
         
         if (!filePath) {
@@ -1079,6 +1094,7 @@ background: rgba(168, 85, 247, 0.18);
             
             // Disable all extract buttons initially
             disableAllExtractButtons();
+            generalExtractBtn.disabled = true; // Disable general extract button for week files
             
             // Enable the corresponding extract button
             const extractBtn = document.getElementById(`extract-week-${weekNumber}-btn`);
@@ -1185,6 +1201,21 @@ background: rgba(168, 85, 247, 0.18);
         openModal();
     }
 
+    // Extract general PDF (for file dialog uploads)
+    function extractGeneralPDF() {
+        if (!isCustomFileUploaded) {
+            alert('Please upload a PDF file using the UPLOAD button first.');
+            return;
+        }
+        
+        if (extractedContent.length === 0) {
+            alert('No content extracted yet. Please wait for extraction to complete.');
+            return;
+        }
+        
+        openModal();
+    }
+
     // Disable all extract buttons
     function disableAllExtractButtons() {
         for (let i = 1; i <= 3; i++) {
@@ -1193,6 +1224,7 @@ background: rgba(168, 85, 247, 0.18);
                 btn.disabled = true;
             }
         }
+        generalExtractBtn.disabled = true;
     }
 
     // Load and process file
@@ -1200,6 +1232,7 @@ background: rgba(168, 85, 247, 0.18);
         try {
             const arrayBuffer = await file.arrayBuffer();
             currentWeek = null; // Reset week for custom files
+            isCustomFileUploaded = true; // Mark as custom file upload
             await loadAndProcessPDF(arrayBuffer, file.name);
         } catch (error) {
             console.error('Error loading file:', error);
@@ -1228,12 +1261,17 @@ background: rgba(168, 85, 247, 0.18);
             // Disable all extract buttons initially
             disableAllExtractButtons();
             
-            // If this is a week PDF, enable its extract button
+            // Enable appropriate extract button based on file source
             if (currentWeek) {
+                // Week PDF - enable week extract button
                 const extractBtn = document.getElementById(`extract-week-${currentWeek}-btn`);
                 if (extractBtn) {
                     extractBtn.disabled = false;
                 }
+                generalExtractBtn.disabled = true; // Keep general extract disabled for week files
+            } else if (isCustomFileUploaded) {
+                // Custom file upload - enable general extract button
+                generalExtractBtn.disabled = false;
             }
             
             // Show extraction status
