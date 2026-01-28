@@ -902,21 +902,6 @@ overflow: hidden;
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-        iframe {
-    border: 0;
-    width: 100%;
-    height: 100%;
-}
-
-iframe::-webkit-scrollbar {
-    display: none;
-}
-
-#iframe-wrapper {
-    padding: 0;
-    margin: 0;
-}
-
 
         .empty-state {
             text-align: center;
@@ -963,77 +948,120 @@ iframe::-webkit-scrollbar {
             ◀️
         </button>
 
-<div class="modal-page-info" id="modal-page-info"style="color:red; font-family:'Times New Roman', Times, serif; font-weight:bold;">
+        <div class="modal-page-info" id="modal-page-info">
             SLIDE 1 of 1
         </div>
 <!-- Bottom Navigation Bar -->
-   <div class="container-items" style="margin-bottom: 0px;height:0px;">
 
-      <button id="VisualImage"
+
+<!-- Week 1 -->
+<div id="Wk1Set1" class="week-set" style="display:none;">
+    <button
         class="item-color"
         style="--color: #facc15"
+
         aria-color="📚Visual"
+
         onclick="showIframe('https://dannyvanpoucke.be/wp-content/uploads/2020/12/surface_Sinc2D_25_Ens.gif')"
       ></button>
+<button
+    class="item-color"
+    style="--color: #facc15"
+
+    aria-color="📚WHITE BOARD"
+    onclick="showIframe('https://wbo.ophir.dev/boards/anonymous')"
+></button>
+
+<button
+        class="item-color"
+        style="--color: #facc15"
 
 
-<button id="Whiteboard"
+        aria-color="📚Lesson Video"
+
+        onclick="showIframe('https://www.youtube.com/embed/7_SX4pTr3gk')"
+      ></button>
+
+      <button
+        class="item-color"
+        style="--color: #f472b6"
+        aria-color="📚JOIN MY QUIZZ"
+        onclick="showIframe('https://wayground.com/join?gc=52065078&source=liveDashboard')"
+      ></button>  
+</div>
+
+<!-- Week 2 -->
+<div id="Wk1Set2" class="week-set" style="display:none;">
+    <button
+        class="item-color"
+         style="--color: #e11d48"
+
+        aria-color="📚Visual"
+
+        onclick="showIframe('https://dannyvanpoucke.be/wp-content/uploads/2020/12/surface_Sinc2D_25_Ens.gif')"
+      ></button>
+<button
     class="item-color"
     style="--color: #e11d48"
     aria-color="📚WHITE BOARD"
     onclick="showIframe('https://wbo.ophir.dev/boards/anonymous')"
 ></button>
 
-      
-      <button ID="LessonVideo"
-        class="item-color"
-        style="--color: #fb923c"
-        aria-color="📚Lesson Video"
-        onclick="showIframe('https://www.youtube.com/embed/DlBUuWBfnTs')">
-      ></button>
 <button
+        class="item-color"
+         style="--color: #e11d48"
+
+        aria-color="📚Lesson Video"
+
+        onclick="showIframe('https://www.youtube.com/embed/7_SX4pTr3gk')"
+      ></button>
+
+      <button
         class="item-color"
         style="--color: #f472b6"
         aria-color="📚JOIN MY QUIZZ"
         onclick="showIframe('https://wayground.com/join?gc=52065078&source=liveDashboard')"
+      ></button>  
+</div>
+
+<!-- Week 3 -->
+<div id="Wk1Set3" class="week-set" style="display:none;">
+    <button
+        class="item-color"
+        style="--color: #000000"
+
+        aria-color="📚Visual"
+
+        onclick="showIframe('https://dannyvanpoucke.be/wp-content/uploads/2020/12/surface_Sinc2D_25_Ens.gif')"
       ></button>
+<button
+    class="item-color"
+    style="--color: #000000"
+    aria-color="📚WHITE BOARD"
+    onclick="showIframe('https://wbo.ophir.dev/boards/anonymous')"
+></button>
+
+<button
+        class="item-color"
+        style="--color: #facc15"
+
+        style="--color: #000000"
+
+        onclick="showIframe('https://www.youtube.com/embed/7_SX4pTr3gk')"
+      ></button>
+
       <button
         class="item-color"
-        style="--color: #84cc16"
-        aria-color="📚Practice Test"
-        onclick="openTest()"
-      ></button>
-<button
-        class="item-color"
-        style="--color: #84cc16"
-        aria-color="📚Practice Test"
-        onclick="openTest()"
-      ></button>
-<button
-        class="item-color"
-        style="--color: #84cc16"
-        aria-color="📚Practice Test"
-        onclick="openTest()"
-      ></button>
-<button
-        class="item-color"
-        style="--color: #84cc16"
-        aria-color="📚Practice Test"
-        onclick="openTest()"
-      ></button>
-<button
-        class="item-color"
-        style="--color: #84cc16"
-        aria-color="📚Practice Test"
-        onclick="openTest()"
-      ></button>
-<button
-        class="item-color"
-        style="--color: #84cc16"
-        aria-color="📚Practice Test"
-        onclick="openTest()"
-      ></button>
-    </div>
+        style="--color: #000000"
+        aria-color="📚JOIN MY QUIZZ"
+        onclick="showIframe('https://wayground.com/join?gc=52065078&source=liveDashboard')"
+      ></button>  
+</div>
+
+
+
+
+
 
     </div>
 
@@ -1159,24 +1187,27 @@ iframe::-webkit-scrollbar {
 
         <!-- Week Extraction Buttons -->
         <div class="action-buttons">
-            <button class="btn-view-extracted" id="extract-week-1-btn" onclick="extractWeek(1)" disabled>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"/>
-                </svg>
-                Extract Week 1
-            </button>
-            <button class="btn-view-extracted" id="extract-week-2-btn" onclick="extractWeek(2)" disabled>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"/>
-                </svg>
-                Extract Week 2
-            </button>
-            <button class="btn-view-extracted" id="extract-week-3-btn" onclick="extractWeek(3)" disabled>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"/>
-                </svg>
-                Extract Week 3
-            </button>
+            <button class="btn-view-extracted"
+        id="extract-week-1-btn"
+        onclick="extractWeek(1)"
+        disabled>
+    Extract Week 1
+</button>
+
+<button class="btn-view-extracted"
+        id="extract-week-2-btn"
+        onclick="extractWeek(2)"
+        disabled>
+    Extract Week 2
+</button>
+
+<button class="btn-view-extracted"
+        id="extract-week-3-btn"
+        onclick="extractWeek(3)"
+        disabled>
+    Extract Week 3
+</button>
+
         </div>
 
         <div class="stats-bar" id="stats-bar" style="display: none;">
@@ -2391,7 +2422,7 @@ function createModalImageBlockHTML(item, index, pageNum) {
     }
 
     function updateModalNav() {
-        modalPageInfo.textContent = `SLIDE ${modalCurrentPage} of ${modalTotalPages}`;
+modalPageInfo.textContent = `Page ${modalCurrentPage} of ${modalTotalPages}`;
         modalPrevBtn.disabled = modalCurrentPage === 1;
         modalNextBtn.disabled = modalCurrentPage === modalTotalPages;
     }
@@ -2971,64 +3002,110 @@ function downloadImageInModal(pageNum, index) {
 }
 </script>
 <script>
+// Updated showIframe function to work with URL parameter from your buttons
 function showIframe(url) {
+    // Check if modal is open
     const modal = document.getElementById('extracted-content-modal');
     if (!modal || !modal.classList.contains('active')) {
         alert('Please open the modal first by extracting content.');
         return;
     }
-
+    
+    // Get the current page from modal navigation
     const modalPageInfo = document.getElementById('modal-page-info');
     let currentPage = 1;
-
+    
     if (modalPageInfo) {
         const match = modalPageInfo.textContent.match(/Page (\d+) of/);
-        if (match) currentPage = parseInt(match[1]);
+        if (match) {
+            currentPage = parseInt(match[1]);
+        }
     }
-
+    
+    // Update global variable
     currentIframePage = currentPage;
+    
+    // Construct dynamic IDs based on current page
+    const iframeWrapperId = `iframe-wrapper-${currentPage}`;
+    const iframeId = `SlideIframe-${currentPage}`;
+    const imageId = `SlideImage-${currentPage}`;
+    
+    const iframeWrapper = document.getElementById(iframeWrapperId);
+    const iframe = document.getElementById(iframeId);
+    const image = document.getElementById(imageId);
 
-    const iframeWrapper = document.getElementById(`iframe-wrapper-${currentPage}`);
-    const iframe = document.getElementById(`SlideIframe-${currentPage}`);
-    const image = document.getElementById(`SlideImage-${currentPage}`);
+    if (iframeWrapper && iframe && image) {
+        // Hide the image
+        image.style.display = 'none';
 
-    if (!iframeWrapper || !iframe || !image) {
-        alert('Iframe not available on this slide.');
-        return;
-    }
-
-    image.style.display = 'none';
-    iframeWrapper.style.display = 'block';
-
-    // 🔥 YouTube detection + clean embed
-    if (url.includes('youtube.com') || url.includes('youtu.be')) {
-        const videoId = extractYouTubeID(url);
-
-        iframe.src =
-            `https://www.youtube.com/embed/${videoId}` +
-            `?autoplay=1&controls=0&modestbranding=1` +
-            `&rel=0&showinfo=0&iv_load_policy=3` +
-            `&fs=1&playsinline=1`;
-
-        iframe.setAttribute('allow',
-            'autoplay; encrypted-media; picture-in-picture');
+        // Show iframe wrapper and set URL
+        iframeWrapper.style.display = 'block';
+        iframe.src = url;
+        
+        console.log(`Showing iframe on page ${currentPage} with URL: ${url}`);
     } else {
-        iframe.src = url; // non-YouTube content
+        console.error('Elements not found for page:', currentPage);
+        alert('Iframe not available. Please navigate to a different slide and try again.');
     }
-
-    console.log(`Iframe loaded on page ${currentPage}`);
 }
 
-// Helper function
-function extractYouTubeID(url) {
-    const regExp =
-        /(?:youtube\.com\/.*v=|youtu\.be\/)([^&?/]+)/;
-    const match = url.match(regExp);
-    return match ? match[1] : '';
+// Updated closeIframe function to work with current page
+function closeIframe(pageNum = null) {
+    // Use provided pageNum or the currentIframePage
+    const pageToClose = pageNum || currentIframePage;
+    
+    // Construct dynamic IDs based on page number
+    const iframeWrapperId = `iframe-wrapper-${pageToClose}`;
+    const imageId = `SlideImage-${pageToClose}`;
+    
+    const iframeWrapper = document.getElementById(iframeWrapperId);
+    const image = document.getElementById(imageId);
+
+    if (iframeWrapper && image) {
+        // Hide iframe wrapper
+        iframeWrapper.style.display = 'none';
+
+        // Show the original image again
+        image.style.display = 'block';
+        
+        console.log(`Closing iframe for page ${pageToClose}`);
+    } else {
+        console.error('Elements not found for page:', pageToClose);
+    }
+}
+
+// Function to update iframe on modal page change (call this when modal page changes)
+function updateIframeOnPageChange() {
+    // Close iframe on current page if open
+    closeIframe();
+    
+    // Reset current page
+    const modalPageInfo = document.getElementById('modal-page-info');
+    if (modalPageInfo) {
+        const match = modalPageInfo.textContent.match(/Page (\d+) of/);
+        if (match) {
+            currentIframePage = parseInt(match[1]);
+        }
+    }
 }
 </script>
+<script>
+function extractWeek(weekNo) {
 
+    // Hide all week divs
+    document.querySelectorAll('.week-set').forEach(div => {
+        div.style.display = 'none';
+    });
 
+    // Show selected week div
+    const targetDiv = document.getElementById('Wk1Set' + weekNo);
+    if (targetDiv) {
+        targetDiv.style.display = 'block';
+    }
+
+   
+}
+</script>
 
 </body>
 </html>
