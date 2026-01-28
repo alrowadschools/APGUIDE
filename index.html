@@ -6,6 +6,7 @@
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.10.0/dist/pptxgen.bundle.js"></script>
     <title>PDF Text & Image Extractor</title>
     <style>
+
         /* PDF Viewer Styles */
         .pdf-viewer-container {
             display: none;
@@ -16,6 +17,140 @@
             overflow: hidden;
             position: relative;
         }
+/* From Uiverse.io by Cobp - Modified for Lab Page */
+    .container-items {
+      display: flex;
+      transform-style: preserve-3d;
+      transform: perspective(1000px);
+      gap: 10px;
+      padding: 10px 20px;
+      background: transparent;
+      border-radius: 15px;
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) perspective(1000px);
+      
+    }
+
+    .item-color {
+      position: relative;
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      border: none;
+      outline: none;
+      transition: 500ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
+      cursor: pointer;
+     border-radius:100%;
+
+      &::after {
+        position: absolute;
+        content: "";
+        inset: 0;
+        width: 20px;
+        height: 20px;
+        background-color: var(--color);
+        border-radius:100%;
+        transform: scale(1.1);
+        pointer-events: none;
+        transition: 500ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
+      }
+
+      &::before {
+        position: absolute;
+        content: attr(aria-color);
+        left: 50%;
+        bottom: 52px;
+        font-size: 12px;
+        font-family: 'Roboto', sans-serif;
+        font-weight: 600;
+        line-height: 16px;
+        transform: translateX(-50%);
+        padding: 6px 12px;
+        background-color: #2c3e50;
+        color: white;
+        border-radius: 8px;
+        pointer-events: none;
+        opacity: 0;
+        visibility: hidden;
+        transition: 500ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
+        white-space: nowrap;
+        z-index: 100000;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      }
+.item-color::after {
+    position: absolute;
+    content: attr(data-emoji);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    inset: 0;
+    width: 40px;
+    height: 30px;
+    font-size: 18px; /* Adjust emoji size */
+    border-radius: 8px;
+    pointer-events: none;
+    transform: scale(1.1);
+    transition: 500ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
+}
+
+      &:hover {
+        transform: scale(1.5);
+        z-index: 99999;
+
+        &::before {
+          opacity: 1;
+          visibility: visible;
+        }
+      }
+
+      &:active::after {
+        transform: scale(0.9);
+      }
+    }
+
+    .item-color:hover + * {
+      transform: scale(1.3);
+      z-index: 9999;
+    }
+
+    .item-color:hover + * + * {
+      transform: scale(1.15);
+      z-index: 999;
+    }
+
+    .item-color:has(+ *:hover) {
+      transform: scale(1.3);
+      z-index: 9999;
+    }
+
+    .item-color:has(+ * + *:hover) {
+      transform: scale(1.15);
+      z-index: 999;
+    }
+
+    /* Icon navigation buttons */
+    .nav-button-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid white;
+      border-radius: 50%;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-button-icon:hover {
+      background: white;
+      color: #3498db;
+      transform: scale(1.1);
+    }
 
         .viewer-header {
             display: flex;
@@ -688,6 +823,7 @@ background: rgba(168, 85, 247, 0.18);
             border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius:0px;
             overflow: hidden;
+            height:100%;
         }
 
         .image-header {
@@ -706,17 +842,20 @@ background: rgba(168, 85, 247, 0.18);
 
 .image-container {
     width: 100%;
+height:88%;
     aspect-ratio: 16 / 9;   /* change if needed */
     background: white;
-    border-radius: 8px;
+    border-radius: 0px;
     overflow: hidden;
+    
 }
 
 .image-container img {
     width: 100%;
-    height: 100%;
+    height: 80%;
     object-fit: contain;    /* NO vertical crop */
     display: block;
+overflow: hidden;
 }
 
 
@@ -800,27 +939,107 @@ background: rgba(168, 85, 247, 0.18);
                     <!-- Pages will be inserted here -->
                 </div>
             </div>
-            <div class="modal-nav">
-                <button class="modal-nav-btn" id="modal-prev-btn" onclick="prevModalPage()">
-                    <svg width="20" height="20" viewBox="0 0 24 24">
-                        <path fill="currentColor" d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z"/>
-                    </svg>
-                    PREVIOUS
-                </button>
-                <div class="modal-page-info" id="modal-page-info">SLIDE 1 of 1</div>
-<button class="modal-close" onclick="closeModal()">
-                    <svg width="24" height="24" viewBox="0 0 24 24">
-                        <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
-                    </svg>
-                </button>
+            <div class="modal-nav"
+     style="position: relative; display: flex; align-items: center;">
 
-                <button class="modal-nav-btn" id="modal-next-btn" onclick="nextModalPage()">
-                    NEXT
-                    <svg width="20" height="20" viewBox="0 0 24 24">
-                        <path fill="currentColor" d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/>
-                    </svg>
-                </button>
-            </div>
+    <!-- Left group -->
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <button class="modal-nav-btn" id="modal-prev-btn" onclick="prevModalPage()">
+            ◀️
+        </button>
+
+<div class="modal-page-info" id="modal-page-info"style="color:red; font-family:'Times New Roman', Times, serif; font-weight:bold;">
+            SLIDE 1 of 1
+        </div>
+<!-- Bottom Navigation Bar -->
+   <div class="container-items" style="margin-bottom: 0px;height:0px;">
+
+      <button id="VisualImage"
+        class="item-color"
+        style="--color: #facc15"
+        aria-color="📚Visual"
+        onclick="showIframe('https://dannyvanpoucke.be/wp-content/uploads/2020/12/surface_Sinc2D_25_Ens.gif')"
+      ></button>
+
+
+<button id="Whiteboard"
+    class="item-color"
+    style="--color: #e11d48"
+    aria-color="📚WHITE BOARD"
+    onclick="showIframe('https://wbo.ophir.dev/boards/anonymous')"
+></button>
+
+      
+      <button ID="LessonVideo"
+        class="item-color"
+        style="--color: #fb923c"
+        aria-color="📚Lesson Video"
+        onclick="showIframe('https://www.youtube.com/embed/DlBUuWBfnTs')">
+      ></button>
+<button
+        class="item-color"
+        style="--color: #f472b6"
+        aria-color="📚JOIN MY QUIZZ"
+        onclick="showIframe('https://wayground.com/join?gc=52065078&source=liveDashboard')"
+      ></button>
+      <button
+        class="item-color"
+        style="--color: #84cc16"
+        aria-color="📚Practice Test"
+        onclick="openTest()"
+      ></button>
+<button
+        class="item-color"
+        style="--color: #84cc16"
+        aria-color="📚Practice Test"
+        onclick="openTest()"
+      ></button>
+<button
+        class="item-color"
+        style="--color: #84cc16"
+        aria-color="📚Practice Test"
+        onclick="openTest()"
+      ></button>
+<button
+        class="item-color"
+        style="--color: #84cc16"
+        aria-color="📚Practice Test"
+        onclick="openTest()"
+      ></button>
+<button
+        class="item-color"
+        style="--color: #84cc16"
+        aria-color="📚Practice Test"
+        onclick="openTest()"
+      ></button>
+<button
+        class="item-color"
+        style="--color: #84cc16"
+        aria-color="📚Practice Test"
+        onclick="openTest()"
+      ></button>
+    </div>
+
+    </div>
+
+    <!-- Close button (slightly left of center) -->
+    <button class="modal-close"
+        onclick="closeModal()"
+        style="
+            position: absolute;
+            left: 90%;
+            transform: translateX(-65%);background:red;
+        ">
+        ✖️
+    </button>
+
+    <!-- Right button -->
+    <button class="modal-nav-btn" id="modal-next-btn" onclick="nextModalPage()">
+        ▶️
+    </button>
+
+</div>
+
         </div>
     </div>
 
@@ -1770,14 +1989,11 @@ function createModalTextBlockHTML(item, index, pageNum) {
             displayTextHTML = escapeHtml(firstParagraph.trim());
         }
         
-        // Create the combined text - DON'T escape the HTML tags in displayTextHTML
+        // Create the combined text
         const combinedText = `<div style="margin-bottom:0px; font-weight: bold; color: black;height:500px;overflow-y:auto;">
                                  ${displayTextHTML}
                               </div>
-                              <hr style="border: none; height: 2px; background: linear-gradient(90deg, #a855f7, #6366f1); margin: 0px 0;">
-                              <div id="NotesText" style="margin-top: 0px;height:300px;overflow-y:auto;display:none;">
-                                 ${escapeHtml(textAfterHeading)}
-                              </div>`;
+                              <hr style="border: none; height: 2px; background: linear-gradient(90deg, #a855f7, #6366f1); margin: 0px 0;">`;
         
         return `
             <div class="text-block">
@@ -1812,7 +2028,10 @@ function createModalTextBlockHTML(item, index, pageNum) {
                             <button class="btn btn-save" onclick="saveTextInModal(${pageNum}, ${index})">💾 Save</button>
                             <button class="btn btn-cancel" onclick="cancelEditInModal(${pageNum}, ${index})">✖ Cancel</button>
                         ` : `
-                            <button class="btn btn-edit" onclick="startEditInModal(${pageNum}, ${index})">✏️ Edit</button>
+<button class="btn btn-edit"
+        onclick="openNotesModal(${pageNum})">
+    ✏️ NOTES PANEL
+</button>
                         `}
                     </div>
                 </div>
@@ -1853,49 +2072,227 @@ function createModalImageBlockHTML(item, index, pageNum) {
     // Get heading for this page
     const pageHeading = extractedHeadings[pageNum] || `Page ${pageNum}`;
     
+    // Create unique IDs for each slide to avoid DOM conflicts
+    const iframeWrapperId = `iframe-wrapper-${pageNum}`;
+    const iframeId = `SlideIframe-${pageNum}`;
+    const imageId = `SlideImage-${pageNum}`;
+    
     return `
-        <div class="image-block">
-            <!-- TOP ROW: Page Heading + Download Button -->
-            <div style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 0px;
-                gap: 0px;
-                flex-wrap: wrap;
-                    background: rgba(168, 85, 247, 0.18);
-                border-radius: 0px;
-                padding:10px;
-            ">
-                <div style="
-                    font-family: 'Times New Roman', Times, serif;
-                    font-size: 26px;
-                    font-weight: bold;
-                    color: #2c3e50;
-                    text-align: left;
-                    flex: 1;
-                ">
-                    ${escapeHtml(pageHeading)}
-                </div>
-                <div class="block-actions">
-<button class="btn btn-download" onclick="downloadImageInModal(${pageNum}, ${index})">⬇️ DOWNLOAD .PPTX</button>
-                </div>
-            </div>
-            
-            <div class="image-container">
-                <img src="${item.content}" alt="Extracted image from page ${item.pageNumber}">
-            </div>
-            ${item.qrData ? `
-                <div class="text-content">
-                    <div class="qr-result">
-                        <div class="qr-result-label">🔍 QR Code Detected:</div>
-                        <div class="qr-result-data">${escapeHtml(item.qrData)}</div>
-                    </div>
-                </div>
-            ` : ''}
+<div class="image-block">
+    <!-- TOP ROW: Page Heading + Download Button -->
+    <div style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0px;
+        gap: 0px;
+        flex-wrap: wrap;
+        background: rgba(168, 85, 247, 0.18);
+        border-radius: 0px;
+        padding:10px;
+    ">
+        <div style="
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 26px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-align: left;
+            flex: 1;
+        ">
+            ${escapeHtml(pageHeading)}
         </div>
+        <div class="block-actions">
+            <button class="btn btn-download" onclick="downloadImageInModal(${pageNum}, ${index})">
+                ⬇️ DOWNLOAD .PPTX
+            </button>
+        </div>
+    </div>
+    
+    <div class="image-container" style="position: relative;">
+        <!-- Hidden iframe with close button -->
+<div id="${iframeWrapperId}" 
+     style="
+        display:none;
+        position: relative;
+        height:100%;
+        width:97%;
+        overflow:hidden;           /* 🚫 no outer scroll */
+        margin-top:10px;
+        margin-left:10px;
+     ">
+
+    <button 
+        onclick="closeIframe(${pageNum})"
+        style="
+            position:absolute;
+            top:5px;
+            right:5px;
+            z-index:1000;
+            background:red;
+            color:white;
+            border:none;
+            border-radius:50%;
+            width:30px;
+            height:30px;
+            cursor:pointer;
+            font-weight:bold;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:16px;
+        ">✖</button>
+
+    <iframe id="${iframeId}"
+        style="
+            width:100%;
+            height:90%;
+            border:none;
+            overflow-y:auto;
+            overflow-x:hidden;     /* 🚫 remove X scrollbar */
+        ">
+    </iframe>
+</div>
+
+        <img id="${imageId}" src="${item.content}" alt="Extracted image from page ${item.pageNumber}" style="width:100%; border-radius: 0px;">
+
+    </div>
+
+    ${item.qrData ? `
+        <div class="text-content">
+            <div class="qr-result">
+                <div class="qr-result-label">🔍 QR Code Detected:</div>
+                <div class="qr-result-data">${escapeHtml(item.qrData)}</div>
+            </div>
+        </div>
+    ` : ''}
+</div>
     `;
 }
+    // Open notes modal for specific page
+    function openNotesModal(pageNum) {
+        // Find the text content for this page
+        const pageTextBlocks = extractedContent.filter(item => 
+            item.pageNumber == pageNum && item.type === 'text'
+        );
+        
+        if (pageTextBlocks.length === 0) {
+            alert('No text content found for this page.');
+            return;
+        }
+        
+        // Get the first text block (main content)
+        const textBlock = pageTextBlocks[0];
+        const textContent = textBlock.content;
+        
+        // Get heading for this page
+        const pageHeading = extractedHeadings[pageNum] || `Page ${pageNum}`;
+        
+        // Find the position of the heading in the text
+        const headingPosition = textContent.indexOf(pageHeading);
+        let notesContent = textContent;
+        
+        if (headingPosition !== -1) {
+            // Extract text that comes AFTER the heading
+            notesContent = textContent.substring(headingPosition + pageHeading.length);
+            notesContent = notesContent.replace(/^[#\s]*/, '').trim();
+            
+            if (notesContent.length < 50) {
+                notesContent = textContent;
+            }
+        }
+        
+        // Create or update the notes modal
+        let notesModal = document.getElementById('NotesText');
+        
+        // If modal doesn't exist, create it
+        if (!notesModal) {
+            notesModal = document.createElement('div');
+            notesModal.id = 'NotesText';
+            notesModal.style.cssText = `
+                display: none;
+                position: fixed;
+                top: 1%;
+                left: 1%;
+                width: 48%;
+                height: 85%;
+                background:transparent;
+                z-index: 9999;
+                justify-content: center;
+                align-items: center;
+                border-top-left-radius: 30px;
+                overflow-y:hidden;
+            `;
+            document.body.appendChild(notesModal);
+        }
+        
+        // Update modal content with current page's notes
+        notesModal.innerHTML = `
+            <div style="
+                background: white;
+                width: 100%;
+                max-height: 81%;
+                margin: auto;
+                padding: 20px;
+                border-radius: 8px;
+                position: relative;
+                overflow-y:hidden;
+                 border-top-left-radius: 30px;
+            ">
+                <!-- Top-right X close -->
+                <span onclick="closeNotesModal()"
+                      style="position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 26px; font-weight: bold; color: red;">
+                    &times;
+                </span>
+                
+                <!-- Modal Header -->
+                <div style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #a855f7;">
+                    <h2 style="margin: 0; color: #2c3e50; font-family: 'Times New Roman', Times, serif;">
+                        📝 Notes - ${escapeHtml(pageHeading)}
+                    </h2>
+                    
+                </div>
+                
+                <!-- Modal Content -->
+                <div style="
+                    font-family: 'Times New Roman', Times, serif;
+                    font-size: 20px;
+                    line-height: 1.6;
+                    color: #333;
+                    max-height: 500px;
+                    overflow-y: auto;
+                    padding: 10px;
+                    background: white;
+                    border-radius: 30px;
+                ">
+                    ${escapeHtml(notesContent).replace(/\n/g, '<br>')}
+                </div>
+                
+                <!-- Bottom Close Button -->
+                <div style="text-align: right; margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee;">
+                    <button onclick="closeNotesModal()"
+                            style="padding: 8px 20px; border: none; background: #a855f7; color: white; 
+                                   cursor: pointer; border-radius: 4px; font-size: 16px; font-weight: bold;">
+                        Close
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // Show the modal
+        notesModal.style.display = 'flex';
+        
+        // Store current page number for reference if needed
+        notesModal.dataset.pageNum = pageNum;
+    }
+
+    // Close notes modal
+    function closeNotesModal() {
+        const notesModal = document.getElementById('NotesText');
+        if (notesModal) {
+            notesModal.style.display = 'none';
+        }
+    }
+
     // Modal-specific edit functions
     function startEditInModal(pageNum, index) {
         const item = findItemByPageAndIndex(pageNum, index, 'text');
@@ -1979,7 +2376,7 @@ function createModalImageBlockHTML(item, index, pageNum) {
     }
 
     function updateModalNav() {
-        modalPageInfo.textContent = `Page ${modalCurrentPage} of ${modalTotalPages}`;
+        modalPageInfo.textContent = `SLIDE ${modalCurrentPage} of ${modalTotalPages}`;
         modalPrevBtn.disabled = modalCurrentPage === 1;
         modalNextBtn.disabled = modalCurrentPage === modalTotalPages;
     }
@@ -2558,6 +2955,95 @@ function downloadImageInModal(pageNum, index) {
     }
 }
 </script>
+<script>
+// Updated showIframe function to work with URL parameter from your buttons
+function showIframe(url) {
+    // Check if modal is open
+    const modal = document.getElementById('extracted-content-modal');
+    if (!modal || !modal.classList.contains('active')) {
+        alert('Please open the modal first by extracting content.');
+        return;
+    }
+    
+    // Get the current page from modal navigation
+    const modalPageInfo = document.getElementById('modal-page-info');
+    let currentPage = 1;
+    
+    if (modalPageInfo) {
+        const match = modalPageInfo.textContent.match(/Page (\d+) of/);
+        if (match) {
+            currentPage = parseInt(match[1]);
+        }
+    }
+    
+    // Update global variable
+    currentIframePage = currentPage;
+    
+    // Construct dynamic IDs based on current page
+    const iframeWrapperId = `iframe-wrapper-${currentPage}`;
+    const iframeId = `SlideIframe-${currentPage}`;
+    const imageId = `SlideImage-${currentPage}`;
+    
+    const iframeWrapper = document.getElementById(iframeWrapperId);
+    const iframe = document.getElementById(iframeId);
+    const image = document.getElementById(imageId);
+
+    if (iframeWrapper && iframe && image) {
+        // Hide the image
+        image.style.display = 'none';
+
+        // Show iframe wrapper and set URL
+        iframeWrapper.style.display = 'block';
+        iframe.src = url;
+        
+        console.log(`Showing iframe on page ${currentPage} with URL: ${url}`);
+    } else {
+        console.error('Elements not found for page:', currentPage);
+        alert('Iframe not available. Please navigate to a different slide and try again.');
+    }
+}
+
+// Updated closeIframe function to work with current page
+function closeIframe(pageNum = null) {
+    // Use provided pageNum or the currentIframePage
+    const pageToClose = pageNum || currentIframePage;
+    
+    // Construct dynamic IDs based on page number
+    const iframeWrapperId = `iframe-wrapper-${pageToClose}`;
+    const imageId = `SlideImage-${pageToClose}`;
+    
+    const iframeWrapper = document.getElementById(iframeWrapperId);
+    const image = document.getElementById(imageId);
+
+    if (iframeWrapper && image) {
+        // Hide iframe wrapper
+        iframeWrapper.style.display = 'none';
+
+        // Show the original image again
+        image.style.display = 'block';
+        
+        console.log(`Closing iframe for page ${pageToClose}`);
+    } else {
+        console.error('Elements not found for page:', pageToClose);
+    }
+}
+
+// Function to update iframe on modal page change (call this when modal page changes)
+function updateIframeOnPageChange() {
+    // Close iframe on current page if open
+    closeIframe();
+    
+    // Reset current page
+    const modalPageInfo = document.getElementById('modal-page-info');
+    if (modalPageInfo) {
+        const match = modalPageInfo.textContent.match(/Page (\d+) of/);
+        if (match) {
+            currentIframePage = parseInt(match[1]);
+        }
+    }
+}
+</script>
+
 
 </body>
 </html>
