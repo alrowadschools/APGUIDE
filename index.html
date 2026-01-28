@@ -1,12 +1,539 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.10.0/dist/pptxgen.bundle.js"></script>
-    <title>PDF Text & Image Extractor</title>
-    <style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCQ from Sentences with Feedback</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
+<script type="text/javascript" src="scriptB/jquery.min.js"></script>
+<script type="text/javascript" src="scriptB/turn.min.js"></script>
+<link rel="stylesheet" href="scriptB/basic.css">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.10.0/dist/pptxgen.bundle.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.worker.min.js"></script>
+    <script src="https://cozmo.github.io/jsQR/jsQR.js"></script>
+
+
+
+  <style>
+    .custom-label {
+      font-family: 'Times New Roman', Times, serif;
+      font-weight: bold;
+      font-size: 16px;
+      color: #fff;
+      padding:5px;
+      border-radius:20px;
+    }
+    
+
+    
+    
+    
+    /* Week Grid Styles */
+/* ===== WEEK GRID (UNCHANGED) ===== */
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  padding: 20px;
+  justify-items: center;
+}
+
+/* ===== WEEK CARD (UIVERSE LOOK) ===== */
+.week-item {
+  background-color: transparent;
+  width: 190px;
+  height: 128px;
+  perspective: 1000px;
+  font-family: sans-serif;
+  cursor: pointer;
+}
+
+.week-item-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+
+.week-item:hover .week-item-inner {
+  transform: rotateY(180deg);
+}
+
+.week-item-front,
+.week-item-back {
+  box-shadow: 0 8px 14px rgba(0,0,0,0.2);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  backface-visibility: hidden;
+  border: 1px solid coral;
+  border-radius: 1rem;
+}
+
+/* FRONT */
+.week-item-front {
+  background: linear-gradient(
+    120deg,
+    bisque 60%,
+    rgb(255, 231, 222) 88%,
+    rgb(255, 211, 195) 40%,
+    rgba(255, 127, 80, 0.6) 48%
+  );
+  color: coral;
+  font-size: 1.5em;
+  font-weight: 900;
+}
+
+/* BACK */
+.week-item-back {
+  background: linear-gradient(
+    120deg,
+    rgb(255, 174, 145) 30%,
+    coral 88%,
+    bisque 40%,
+    rgb(255, 185, 160) 78%
+  );
+  color: white;
+  transform: rotateY(180deg);
+}
+
+    
+    .home-button {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      z-index: 100;
+      padding: 8px 20px;
+      background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-family: 'Roboto', sans-serif;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+    
+    .home-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* Week 1 Content Styles */
+.lesson-container {
+  padding: 0px 15px;
+  height: 100%;
+  width: 96%;
+  overflow-y: auto;
+  font-family: 'Source Sans Pro', sans-serif;
+  color: #2c3e50;
+  line-height: 1.0;
+
+  /* Hide scrollbar */
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE / Edge */
+}
+
+/* Chrome, Safari, Opera */
+.lesson-container::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+    
+.lesson-heading {
+  color: #2c3e50;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding-bottom: 0px;
+  padding-left: 10px;   /* ✅ left padding */
+  border-bottom: 2px solid red;
+  background: black;
+  color: white;
+  margin-left:10px;
+}
+
+    
+   
+    
+    .lesson-paragraph {
+      font-size: 17px;
+      margin-bottom: 20px;
+      text-align: justify;
+      margin-left:10px;
+    }
+    
+    .keywords-box {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border-left: 4px solid #3498db;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 0 8px 8px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .keywords-title {
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+    
+    .example-box {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    
+    .example-title {
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+    
+    .step-box {
+      background: white;
+      border-left: 3px solid #2ecc71;
+      padding: 15px;
+      margin: 12px 0;
+      border-radius: 0 5px 5px 0;
+    }
+    
+    .step-text {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 15px;
+      color: #2c3e50;
+    }
+    
+    .conversion-image {
+      text-align: center;
+      margin: 25px 0;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+    
+    .image-placeholder {
+      width: 100%;
+      height: 180px;
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      border: 2px dashed #3498db;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3498db;
+      font-weight: 600;
+      font-size: 16px;
+    }
+    
+    .lab-examples {
+      background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+      border: 1px solid #ffc107;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 25px 0;
+    }
+    
+    .lab-title {
+      font-weight: 700;
+      color: #856404;
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+    
+    .lab-item {
+      margin: 10px 0;
+      padding-left: 20px;
+      position: relative;
+    }
+    
+    .lab-item:before {
+      content: "•";
+      color: #3498db;
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+    }
+    
+    .summary-box {
+      background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+      border: 1px solid #28a745;
+      border-radius: 8px;
+      padding: 25px;
+      margin: 30px 0;
+    }
+    
+    .summary-title {
+      font-weight: 700;
+      color: #155724;
+      margin-bottom: 20px;
+      font-size: 20px;
+      text-align: center;
+    }
+    
+    .summary-item {
+      margin: 12px 0;
+      padding-left: 25px;
+      position: relative;
+      font-size: 16px;
+    }
+    
+    .summary-item:before {
+      content: "✓";
+      color: #28a745;
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+    }
+    
+    /* Bottom Navigation Bar */
+    .bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+      padding: 15px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+      z-index: 100;
+    }
+    
+
+    
+    .page-content {
+      position: relative;
+      height: 100%;
+      box-sizing: border-box;
+    }
+    
+    .end-lesson {
+      text-align: center;
+      color: #7f8c8d;
+      font-style: italic;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #ecf0f1;
+      font-size: 16px;
+    }
+    
+    /* Table Styles */
+    .conversion-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .conversion-table th {
+      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+    }
+    
+    .conversion-table td {
+      padding: 15px;
+      border-bottom: 1px solid #dee2e6;
+      background: white;
+    }
+    
+    .conversion-table tr:nth-child(even) td {
+      background: #f8f9fa;
+    }
+
+    /* From Uiverse.io by Cobp - Modified for Lab Page */
+    .container-items {
+      display: flex;
+      transform-style: preserve-3d;
+      transform: perspective(1000px);
+      gap: 0px;
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) perspective(1000px);
+      
+    }
+
+    .item-color {
+      position: relative;
+      flex-shrink: 0;
+      width: 40px;
+      height: 30px;
+      border: none;
+      outline: none;
+      transition: 500ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
+      cursor: pointer;
+
+      &::after {
+        position: absolute;
+        content: "";
+        inset: 0;
+        width: 40px;
+        height: 15px;
+        background-color: var(--color);
+        border-radius: 8px;
+        transform: scale(1.1);
+        pointer-events: none;
+        transition: 500ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
+      }
+
+      &::before {
+        position: absolute;
+        content: attr(aria-color);
+        left: 50%;
+        bottom: 52px;
+        font-size: 12px;
+        font-family: 'Roboto', sans-serif;
+        font-weight: 600;
+        line-height: 16px;
+        transform: translateX(-50%);
+        padding: 6px 12px;
+        background-color: #2c3e50;
+        color: white;
+        border-radius: 8px;
+        pointer-events: none;
+        opacity: 0;
+        visibility: hidden;
+        transition: 500ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
+        white-space: nowrap;
+        z-index: 100000;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      }
+.item-color::after {
+    position: absolute;
+    content: attr(data-emoji);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    inset: 0;
+    width: 40px;
+    height: 30px;
+    font-size: 18px; /* Adjust emoji size */
+    border-radius: 8px;
+    pointer-events: none;
+    transform: scale(1.1);
+    transition: 500ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
+}
+
+      &:hover {
+        transform: scale(1.5);
+        z-index: 99999;
+
+        &::before {
+          opacity: 1;
+          visibility: visible;
+        }
+      }
+
+      &:active::after {
+        transform: scale(0.9);
+      }
+    }
+
+    .item-color:hover + * {
+      transform: scale(1.3);
+      z-index: 9999;
+    }
+
+    .item-color:hover + * + * {
+      transform: scale(1.15);
+      z-index: 999;
+    }
+
+    .item-color:has(+ *:hover) {
+      transform: scale(1.3);
+      z-index: 9999;
+    }
+
+    .item-color:has(+ * + *:hover) {
+      transform: scale(1.15);
+      z-index: 999;
+    }
+
+    /* Icon navigation buttons */
+    .nav-button-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid white;
+      border-radius: 50%;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-button-icon:hover {
+      background: white;
+      color: #3498db;
+      transform: scale(1.1);
+    }
+
+    /* Lab Page specific styles */
+    #lab-iframe-container {
+      height: calc(100% - 100px);
+      width: 100%;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+/* Add to existing CSS */
+.format-toggle-btn {
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.format-toggle-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.format-toggle-btn.active {
+  box-shadow: 0 0 0 2px white, 0 0 0 4px #3498db;
+}
+
+/* Adjust lesson container for toggle buttons */
+.lesson-container {
+  padding:0px 0px;
+  height:100%;
+  overflow-y: auto;
+ /* Hide scrollbar */
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE / Edge */
+}
+/* PDF Viewer Styles */
+       
         /* PDF Viewer Styles */
         .pdf-viewer-container {
             display: none;
@@ -924,14 +1451,312 @@ overflow: hidden;
             .modal-header, .modal-nav { padding: 15px 20px; }
             .extracted-heading { font-size: 1.4rem; padding: 10px; }
         }
-    </style>
+
+  </style>
 </head>
 <body>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.worker.min.js"></script>
-    <script src="https://cozmo.github.io/jsQR/jsQR.js"></script>
+<div class="flipbook-viewport" style="height:98%;width:99%;">
+  <div class="container" 
+     style="background: white url('Images/week 1/coverpage.png') no-repeat left center; 
+            background-size: 50% 100%; 
+            width: 100%; 
+            height: 100%;">
 
-    <!-- Modal for extracted content -->
+
+    <div class="flipbook" style="width:100%;background:transparent;">PAGES
+      <!-- Page 1 (Week Page) -->
+      <div id="page1" style="width:100%; padding:0%; background-image: linear-gradient(to right, #d3d3d3, transparent); background-position: left; background-repeat: no-repeat; background-size: 4% 100%;border-left:10px solid grey;">
+        <div class="page-content">
+          
+          <div class="week-grid">
+  <div class="week-item" onclick="goToWeek(1)">
+    <div class="week-item-inner">
+      <div class="week-item-front">Week 1</div>
+      <div class="week-item-back">Details 1</div>
+    </div>
+  </div>
+  <div class="week-item" onclick="goToWeek(2)">
+    <div class="week-item-inner">
+      <div class="week-item-front">Week 2</div>
+      <div class="week-item-back">Details 2</div>
+    </div>
+  </div>
+  <div class="week-item" onclick="goToWeek(3)">
+    <div class="week-item-inner">
+      <div class="week-item-front">Week 3</div>
+      <div class="week-item-back">Details 3</div>
+    </div>
+  </div>
+  <div class="week-item" onclick="goToWeek(4)">
+    <div class="week-item-inner">
+      <div class="week-item-front">Week 4</div>
+      <div class="week-item-back">Details 4</div>
+    </div>
+  </div>
+
+  <div class="week-item" onclick="goToWeek(5)">
+    <div class="week-item-inner">
+      <div class="week-item-front">Week 5</div>
+      <div class="week-item-back">Details 5</div>
+    </div>
+  </div>
+  <div class="week-item" onclick="goToWeek(6)">
+    <div class="week-item-inner">
+      <div class="week-item-front">Week 6</div>
+      <div class="week-item-back">Details 6</div>
+    </div>
+  </div>
+  <div class="week-item" onclick="goToWeek(7)">
+    <div class="week-item-inner">
+      <div class="week-item-front">Week 7</div>
+      <div class="week-item-back">Details 7</div>
+    </div>
+  </div>
+  <div class="week-item" onclick="goToWeek(8)">
+    <div class="week-item-inner">
+      <div class="week-item-front">Week 8</div>
+      <div class="week-item-back">Details 8</div>
+    </div>
+  </div>
+
+  <div class="week-item" onclick="goToWeek(9)">
+    <div class="week-item-inner">
+      <div class="week-item-front">Week 9</div>
+      <div class="week-item-back">Details 9</div>
+    </div>
+  </div>
+  <div class="week-item" onclick="goToWeek(10)">
+    <div class="week-item-inner">
+      <div class="week-item-front">Week 10</div>
+      <div class="week-item-back">Details 10</div>
+    </div>
+  </div>
+  <div class="week-item" onclick="goToWeek(11)">
+    <div class="week-item-inner">
+      <div class="week-item-front">Week 11</div>
+      <div class="week-item-back">Details 11</div>
+    </div>
+  </div>
+  <div class="week-item" onclick="goToWeek(12)">
+    <div class="week-item-inner">
+      <div class="week-item-front">Week 12</div>
+      <div class="week-item-back">Details 12</div>
+    </div>
+  </div>
+
+  <div class="week-item" onclick="goToWeek(13)">
+    <div class="week-item-inner">
+      <div class="week-item-front">Week 13</div>
+      <div class="week-item-back">Details 13</div>
+    </div>
+  </div>
+  <div class="week-item" onclick="goToWeek(14)">
+    <div class="week-item-inner">
+      <div class="week-item-front">Week 14</div>
+      <div class="week-item-back">Details 14</div>
+    </div>
+  </div>
+  <div class="week-item" onclick="goToWeek(15)">
+    <div class="week-item-inner">
+      <div class="week-item-front">Week 15</div>
+      <div class="week-item-back">Details 15</div>
+    </div>
+  </div>
+  <div class="week-item" onclick="goToWeek(16)">
+    <div class="week-item-inner">
+      <div class="week-item-front">Week 16</div>
+      <div class="week-item-back">Details 16</div>
+    </div>
+  </div>
+</div>
+
+
+        </div>
+      </div>
+      
+      <!-- Page 2 - Week 1 Content -->
+<div style="width:100%; background-image: linear-gradient(to left, #d3d3d3, transparent); background-position: right; background-repeat: no-repeat; background-size: 4% 100%;">
+  <div class="page-content">
+    <!-- PDF/Web Book Toggle Buttons -->
+    <div style="position: absolute; top: 10px; right: 20px; z-index: 1000; display: flex; gap: 0px;">
+      <button onclick="showWebBook()"
+        id="webBookBtn"
+        style="
+          width: 36px;
+          height: 36px;
+          background: #7f8c8d;
+          color: white;
+          border: 1px solid red;
+          border-radius: 8px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0;
+        ">
+  <span style="font-size: 18px; line-height: 1;">📖</span>
+</button>
+
+<button onclick="showPDF()"
+        id="pdfBtn"
+        style="
+          width: 36px;
+          height: 36px;
+          background: #7f8c8d;
+          color: white;
+          border: 1px solid red;
+          border-radius: 8px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0;
+           display:none;
+        ">
+  <span style="font-size: 18px; line-height: 1;">📄</span>
+</button>
+
+    </div>
+    
+    <!-- Web Book Content (Default) -->
+<div id="webBookContent"
+     class="lesson-container"
+     style="position: relative;">
+
+
+<iframe id="pdfViewer"
+        src="PDF WEEKS/APCSP Study Guide 4 WEEKS.pdf"
+        style="width:100%; height:100%; border:0; background:#fff;height:95%;">
+</iframe>  
+          </div>
+    
+      </div>
+<!-- Bottom Navigation Bar -->
+   <div class="container-items" style="margin-bottom: 0px;height:15px;">
+
+
+   <button
+    class="item-color"
+    style="--color: #e11d48"
+    aria-color="📚Lab-1"
+    
+    onclick="goToLabPage()"></button>
+
+      <button
+        class="item-color"
+        style="--color: #f472b6"
+        aria-color="📚Lab-2"
+        onclick="openLab2()"
+      ></button>
+      <button
+        class="item-color"
+        style="--color: #fb923c"
+        aria-color="📚Lesson Video"
+        onclick="openLessonVideo()"
+      ></button>
+      <button
+        class="item-color"
+        style="--color: #facc15"
+
+        aria-color="📚Worksheet"
+
+        onclick="openWorksheet()"
+      ></button>
+      <button
+        class="item-color"
+        style="--color: #84cc16"
+        aria-color="📚Practice Test"
+        onclick="openTest()"
+      ></button>
+    </div>
+</div>
+
+      <!-- Page 3 - Week 1 Lab Page (Odd page) -->
+<div id="page3" style="width:100%; padding-left:3%; padding-right:3%; background-image: linear-gradient(to right, #d3d3d3, transparent); background-position: left; background-repeat: no-repeat; background-size: 4% 100%;">
+  <div class="page-content">
+    <!-- Interactive Lab Iframe (Visible by default on this page) -->
+    
+      
+<div style="
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ccc;
+  padding: 10px 15px;
+">
+  
+  <h2 style="
+    color: white;
+    font-family: 'Times New Roman', Times, serif;
+    text-transform: uppercase;
+    margin: 0;
+    font-size: 20px;
+    text-align: center;
+    flex: 1;
+    color:black;
+  ">
+    LAB WEEK 1
+  </h2>
+
+  <button onclick="goToWeekPage()" class="nav-button-icon"style="margin-right:2%;">
+    🏠
+  </button>
+<button onclick="SaveLab()" class="nav-button-icon" style="margin-right:20%;">
+  💾
+</button>
+
+
+</div>
+
+      <div id="savelab"style="height:85%;">
+<iframe
+  id="lab-iframe"
+  src="Tools/WEEK 1/Binary Calculators _ Binary Addition, Subtraction, Conversion _ Step-by-Step Solutions.html"
+  style="width: 100%; height:100%; border: none; border-radius: 0 0 10px 10px; background: white;"
+  sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals"
+></iframe>
+
+   </div>
+    
+    <!-- Bottom Navigation with new button design -->
+    <div class="container-items">
+      <button
+        class="item-color"
+        style="--color: #e11d48"
+        aria-color="Refresh Lab"
+        onclick="refreshLab()"
+      ></button>
+      <button
+        class="item-color"
+        style="--color: #f472b6"
+        aria-color="Fullscreen"
+        onclick="openFullscreen()"
+      ></button>
+      <button
+        class="item-color"
+        style="--color: #fb923c"
+        aria-color="Print"
+        onclick="printLab()"
+      ></button>
+      <button
+        class="item-color"
+        style="--color: #facc15"
+        aria-color="View Lesson"
+        onclick="goToWeekContent()"
+      ></button>
+      <button
+        class="item-color"
+        style="--color: #84cc16"
+        aria-color="Home"
+        onclick="goToWeekPage()"
+      ></button>
+    </div>
+  </div>
+</div>
+
+      <!-- Page 4 - Week 2 Continued -->
+      <div style="width:100%; background-image: linear-gradient(to left, #d3d3d3, transparent); background-position: right; background-repeat: no-repeat; background-size: 4% 100%;overflow-y:auto;">
+           <!-- Modal for extracted content -->
     <div class="modal" id="extracted-content-modal">
         <div class="modal-content">
                    <div class="modal-body">
@@ -952,49 +1777,11 @@ overflow: hidden;
             SLIDE 1 of 1
         </div>
 <!-- Bottom Navigation Bar -->
-
-
-<!-- Week 1 -->
-<div id="Wk1Set1" class="week-set" style="display:none;">
-    <button
-        class="item-color"
-        style="--color: #facc15"
-
-        aria-color="📚Visual"
-
-        onclick="showIframe('https://dannyvanpoucke.be/wp-content/uploads/2020/12/surface_Sinc2D_25_Ens.gif')"
-      ></button>
-<button
-    class="item-color"
-    style="--color: #facc15"
-
-    aria-color="📚WHITE BOARD"
-    onclick="showIframe('https://wbo.ophir.dev/boards/anonymous')"
-></button>
+   <div class="container-items" style="margin-bottom: 0px;height:0px;">
 
 <button
         class="item-color"
         style="--color: #facc15"
-
-
-        aria-color="📚Lesson Video"
-
-        onclick="showIframe('https://www.youtube.com/embed/7_SX4pTr3gk')"
-      ></button>
-
-      <button
-        class="item-color"
-        style="--color: #f472b6"
-        aria-color="📚JOIN MY QUIZZ"
-        onclick="showIframe('https://wayground.com/join?gc=52065078&source=liveDashboard')"
-      ></button>  
-</div>
-
-<!-- Week 2 -->
-<div id="Wk1Set2" class="week-set" style="display:none;">
-    <button
-        class="item-color"
-         style="--color: #e11d48"
 
         aria-color="📚Visual"
 
@@ -1009,7 +1796,7 @@ overflow: hidden;
 
 <button
         class="item-color"
-         style="--color: #e11d48"
+        style="--color: #facc15"
 
         aria-color="📚Lesson Video"
 
@@ -1021,47 +1808,28 @@ overflow: hidden;
         style="--color: #f472b6"
         aria-color="📚JOIN MY QUIZZ"
         onclick="showIframe('https://wayground.com/join?gc=52065078&source=liveDashboard')"
-      ></button>  
-</div>
-
-<!-- Week 3 -->
-<div id="Wk1Set3" class="week-set" style="display:none;">
-    <button
-        class="item-color"
-        style="--color: #000000"
-
-        aria-color="📚Visual"
-
-        onclick="showIframe('https://dannyvanpoucke.be/wp-content/uploads/2020/12/surface_Sinc2D_25_Ens.gif')"
       ></button>
-<button
-    class="item-color"
-    style="--color: #000000"
-    aria-color="📚WHITE BOARD"
-    onclick="showIframe('https://wbo.ophir.dev/boards/anonymous')"
-></button>
-
-<button
-        class="item-color"
-        style="--color: #facc15"
-
-        style="--color: #000000"
-
-        onclick="showIframe('https://www.youtube.com/embed/7_SX4pTr3gk')"
-      ></button>
-
+      
+      
       <button
         class="item-color"
-        style="--color: #000000"
-        aria-color="📚JOIN MY QUIZZ"
-        onclick="showIframe('https://wayground.com/join?gc=52065078&source=liveDashboard')"
-      ></button>  
-</div>
-
-
-
-
-
+        style="--color: #84cc16"
+        aria-color="📚Practice Test"
+        onclick="openTest()"
+      ></button>
+    <button
+        class="item-color"
+        style="--color: #84cc16"
+        aria-color="📚Practice Test"
+        onclick="openTest()"
+      ></button>
+    <button
+        class="item-color"
+        style="--color: #84cc16"
+        aria-color="📚Practice Test"
+        onclick="openTest()"
+      ></button>
+    </div>
 
     </div>
 
@@ -1089,25 +1857,13 @@ overflow: hidden;
     <div class="container">
         <!-- Week Loading Buttons -->
         <div class="action-buttons">
-            <button class="btn-drive" onclick="loadWeekPDF(1)">
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
-                </svg>
-                WEEK 1
-            </button>
-            <button class="btn-drive" onclick="loadWeekPDF(2)">
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
-                </svg>
-                WEEK 2
-            </button>
-            <button class="btn-drive" onclick="loadWeekPDF(3)">
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
-                </svg>
-                WEEK 3
-            </button>
-        </div>
+<!-- Input box -->
+<input type="text" id="WeekNoInput" placeholder="Enter Week No" style="margin-bottom: 8px; width: 100px; padding: 4px;">
+
+<!-- Week buttons -->
+<button class="btn-drive" onclick="loadWeekPDF(1)">WEEK 1</button>
+<button class="btn-drive" onclick="loadWeekPDF(2)">WEEK 2</button>
+<button class="btn-drive" onclick="loadWeekPDF(3)">WEEK 3</button>        </div>
 
         <!-- Upload and General Extract Button -->
         <div class="action-buttons">
@@ -1187,27 +1943,24 @@ overflow: hidden;
 
         <!-- Week Extraction Buttons -->
         <div class="action-buttons">
-            <button class="btn-view-extracted"
-        id="extract-week-1-btn"
-        onclick="extractWeek(1)"
-        disabled>
-    Extract Week 1
-</button>
-
-<button class="btn-view-extracted"
-        id="extract-week-2-btn"
-        onclick="extractWeek(2)"
-        disabled>
-    Extract Week 2
-</button>
-
-<button class="btn-view-extracted"
-        id="extract-week-3-btn"
-        onclick="extractWeek(3)"
-        disabled>
-    Extract Week 3
-</button>
-
+            <button class="btn-view-extracted" id="extract-week-1-btn" onclick="extractWeek(1)" disabled>
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"/>
+                </svg>
+                Extract Week 1
+            </button>
+            <button class="btn-view-extracted" id="extract-week-2-btn" onclick="extractWeek(2)" disabled>
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"/>
+                </svg>
+                Extract Week 2
+            </button>
+            <button class="btn-view-extracted" id="extract-week-3-btn" onclick="extractWeek(3)" disabled>
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"/>
+                </svg>
+                Extract Week 3
+            </button>
         </div>
 
         <div class="stats-bar" id="stats-bar" style="display: none;">
@@ -1227,8 +1980,189 @@ overflow: hidden;
 
         <div id="content-container"></div>
     </div>
+</div></div>
 
-    <script>
+<script type="text/javascript">
+function loadApp() {
+    const flipbook = $('.flipbook');
+
+    flipbook.turn({
+        width: '100%',
+        height: '100%',
+        elevation: 50,
+        gradients: true,
+        when: {
+            turned: function () {
+                // Optional: Add any page turn logic here
+            }
+        }
+    });
+
+    // Keyboard navigation
+    $(document).on('keydown', function (e) {
+        if (e.key === 'ArrowRight') {
+            flipbook.turn('next');
+        } else if (e.key === 'ArrowLeft') {
+            flipbook.turn('previous');
+        }
+    });
+}
+
+// Function to go to a specific week
+function goToWeek(weekNumber) {
+    const flipbook = $('.flipbook');
+    const targetPage = weekNumber * 2;
+    const totalPages = flipbook.turn('pages');
+    if (targetPage <= totalPages) {
+        flipbook.turn('page', targetPage);
+    }
+}
+
+// Function to go back to the week selection page (page 1)
+function goToWeekPage() {
+    const flipbook = $('.flipbook');
+    flipbook.turn('page', 1);
+}
+
+// JavaScript functions for the lab page
+function goToLabPage() {
+  const flipbook = $('.flipbook');
+  flipbook.turn('page', 3);
+}
+
+function goToWeekContent() {
+  const flipbook = $('.flipbook');
+  flipbook.turn('page', 2);
+}
+
+function refreshLab() {
+  document.getElementById('lab-iframe').src = document.getElementById('lab-iframe').src;
+}
+
+function openFullscreen() {
+  const iframe = document.getElementById('lab-iframe');
+  if (iframe.requestFullscreen) {
+    iframe.requestFullscreen();
+  } else if (iframe.webkitRequestFullscreen) {
+    iframe.webkitRequestFullscreen();
+  } else if (iframe.msRequestFullscreen) {
+    iframe.msRequestFullscreen();
+  }
+}
+
+function printLab() {
+  const iframe = document.getElementById('lab-iframe');
+  iframe.contentWindow.print();
+}
+
+// Placeholder functions for other buttons
+function openLab2() {
+  alert('Lab 2 content would load here.');
+}
+
+function openLessonVideo() {
+  alert('Lesson Video would play here.');
+}
+
+function openWorksheet() {
+  alert('Worksheet would open here.');
+}
+
+function openTest() {
+  alert('Test interface would open here.');
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'F5') {
+    e.preventDefault();
+    refreshLab();
+  }
+  if (e.key === 'Escape') {
+    goToWeekContent();
+  }
+  
+  // Number keys for quick navigation
+  if (e.key === '1') refreshLab();
+  if (e.key === '2') openFullscreen();
+  if (e.key === '3') printLab();
+  if (e.key === '4') goToWeekContent();
+  if (e.key === '5') goToWeekPage();
+});
+
+// Load turn.js when the document is ready
+$(document).ready(function() {
+    loadApp();
+});
+</script>
+<script>
+// JavaScript functions for PDF/Web Book toggle
+function showWebBook() {
+  document.getElementById('webBookContent').style.display = 'block';
+  document.getElementById('pdfContent').style.display = 'none';
+  document.getElementById('webBookBtn').style.background = '#3498db';
+  document.getElementById('pdfBtn').style.background = '#7f8c8d';
+}
+
+function showPDF() {
+  document.getElementById('webBookContent').style.display = 'none';
+  document.getElementById('pdfContent').style.display = 'block';
+  document.getElementById('webBookBtn').style.background = '#7f8c8d';
+  document.getElementById('pdfBtn').style.background = '#3498db';
+  
+  // Reload PDF to ensure it displays properly
+  const pdfViewer = document.getElementById('pdfViewer');
+  pdfViewer.src = pdfViewer.src;
+}
+
+function showPDFError() {
+  const pdfContainer = document.getElementById('pdfContent');
+  pdfContainer.innerHTML = `
+    <div style="text-align: center; margin-top: 50px;">
+      <h2 style="color: #e74c3c; font-family: 'Roboto', sans-serif;">⚠️ PDF Load Error</h2>
+      <p style="color: #666; margin: 20px 0;">Unable to load the PDF file. Please check:</p>
+      <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px auto; max-width: 500px;">
+        <p>1. File path: <code>PDF WEEKS/APCSP Study Guide 4 WEEKS.pdf</code></p>
+        <p>2. File exists in the directory</p>
+        <p>3. File is accessible</p>
+      </div>
+      <button onclick="showWebBook()" style="padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 20px; font-family: 'Roboto', sans-serif; font-weight: 600; cursor: pointer; margin-top: 20px;">
+        ↩️ Back to Web Book
+      </button>
+    </div>
+  `;
+}
+
+// Navigation functions
+function goToLabPage() {
+  const flipbook = $('.flipbook');
+  flipbook.turn('page', 3);
+}
+
+function goToWeekPage() {
+  const flipbook = $('.flipbook');
+  flipbook.turn('page', 1);
+}
+
+// Initialize with Web Book view
+showWebBook();
+</script>
+<script>
+function SaveLab() {
+  const iframe = document.getElementById("lab-iframe");
+
+  if (!iframe) {
+    alert("Lab iframe not found");
+    return;
+  }
+
+  const iframeWindow = iframe.contentWindow;
+
+  iframeWindow.focus();
+  iframeWindow.print();
+}
+</script>
+ <script>
     // State
     let extractedContent = [];
     let extractedHeadings = {}; // Store headings by page
@@ -3090,22 +4024,18 @@ function updateIframeOnPageChange() {
 }
 </script>
 <script>
-function extractWeek(weekNo) {
+// Get the input box
+const weekInput = document.getElementById('WeekNoInput');
 
-    // Hide all week divs
-    document.querySelectorAll('.week-set').forEach(div => {
-        div.style.display = 'none';
+// Attach click listener to all buttons with class btn-drive
+document.querySelectorAll('.btn-drive').forEach(btn => {
+    btn.addEventListener('click', function() {
+        // Set input value to button label (text content)
+        weekInput.value = this.textContent.trim();
     });
-
-    // Show selected week div
-    const targetDiv = document.getElementById('Wk1Set' + weekNo);
-    if (targetDiv) {
-        targetDiv.style.display = 'block';
-    }
-
-   
-}
+});
 </script>
+
 
 </body>
 </html>
