@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.10.0/dist/pptxgen.bundle.js"></script>
+<script src="https://unpkg.com/mammoth@1.4.8/mammoth.browser.min.js"></script>
     <title>PDF Text & Image Extractor</title>
     <style>
 
@@ -1037,24 +1038,16 @@ overflow: hidden;
 
 <!-- Week buttons -->
 <button class="btn-drive" onclick="loadWeekPDF(1)">WEEK 1</button>
-<button class="btn-drive" onclick="loadWeekPDF(2)">WEEK 2</button>
-<button class="btn-drive" onclick="loadWeekPDF(3)">WEEK 3</button>        </div>
+  
+ </div>
 
         <!-- Upload and General Extract Button -->
         <div class="action-buttons">
             <button class="btn-drive" onclick="loadPCPDF()">
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M4 6l8.5 12H15L6.5 6H4m2.5 0L13 12h5.5L12 2 6.5 6M18.5 6H22l-8.5 12h3L18.5 6z"/>
-                </svg>
                 UPLOAD📁
             </button>
             
-            <button class="btn-view-extracted" id="general-extract-btn" onclick="extractGeneralPDF()" disabled>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"/>
-                </svg>
-                EXTRACT
-            </button>
+           
         </div>
 
         <!-- PDF Viewer -->
@@ -1121,18 +1114,7 @@ overflow: hidden;
             <button class="btn-view-extracted" id="extract-week-1-btn" onclick="extractWeek(1)" disabled>
                                 Extract Week 1
             </button>
-            <button class="btn-view-extracted" id="extract-week-2-btn" onclick="extractWeek(2)" disabled>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"/>
-                </svg>
-                Extract Week 2
-            </button>
-            <button class="btn-view-extracted" id="extract-week-3-btn" onclick="extractWeek(3)" disabled>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"/>
-                </svg>
-                Extract Week 3
-            </button>
+            
         </div>
 
         <div class="stats-bar" id="stats-bar" style="display: none;">
@@ -1199,8 +1181,9 @@ overflow: hidden;
     // Week file paths
     const weekFiles = {
         1: 'APCSP PDF WEEK FILES/APCSP WEEK 1.pdf',
-        2: 'APCSP PDF WEEK FILES/APCSP WEEK 2.pdf',
-        3: 'APCSP PDF WEEK FILES/APCSP WEEK 3.pdf'
+        2: "APCSP PDF WEEK FILES/APCSP WEEK 2.pdf",
+    	3: "APCSP PDF WEEK FILES/APCSP WEEK 3.pdf",
+    	4: "APCSP PDF WEEK FILES/APCSP WEEK 4.pdf"
     };
 
     // Set worker source
@@ -1981,9 +1964,13 @@ function createModalTextBlockHTML(item, index, pageNum) {
                     padding: 10px;
                     border-right:6px solid white;
                 ">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span class="block-badge badge-text">📝 Text</span>
-                    </div>
+                   <div extractGeneralPDF()"
+     style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+    
+    <span class="block-badge badge-text">📁Upload File</span>
+
+</div>
+
                     <div style="
                         font-family: 'Times New Roman', Times, serif;
                         font-size: 26px;
