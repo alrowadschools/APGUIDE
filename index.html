@@ -954,7 +954,22 @@ overflow: hidden;
         </div>
 <!-- Bottom Navigation Bar -->
    <div class="container-items" style="margin-bottom: 0px;height:0px;">
-
+<!-- Upload and General Extract Button -->
+        <div class="action-buttons">
+            <button class="btn-drive" onclick="loadPCPDF()">
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M4 6l8.5 12H15L6.5 6H4m2.5 0L13 12h5.5L12 2 6.5 6M18.5 6H22l-8.5 12h3L18.5 6z"/>
+                </svg>
+                UPLOAD📁
+            </button>
+            
+            <button class="btn-view-extracted" id="general-extract-btn" onclick="extractGeneralPDF()" disabled>
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"/>
+                </svg>
+                EXTRACT
+            </button>
+        </div>
 <button
         class="item-color"
         style="--color: #facc15"
@@ -1041,10 +1056,7 @@ overflow: hidden;
   
  </div>
 
-        <!-- Upload and General Extract Button -->
-        <div class="action-buttons">
-           
-        </div>
+        
 
         <!-- PDF Viewer -->
         <div class="pdf-viewer-container" id="pdf-viewer-container"style="display:none;">
@@ -1962,13 +1974,6 @@ function createModalTextBlockHTML(item, index, pageNum) {
                 ">
                     <div style="display: flex; align-items: center; gap: 10px;">
                         <span class="block-badge badge-text">📝 Text</span>
-  <button class="btn-drive" onclick="loadPCPDF()">
-                                UPLOAD📁
-            </button>
-    <button class="btn-view-extracted" id="general-extract-btn" onclick="extractGeneralPDF()" disabled>
-             
-                EXTRACT
-            </button>
                     </div>
                     <div style="
                         font-family: 'Times New Roman', Times, serif;
