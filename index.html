@@ -954,22 +954,7 @@ overflow: hidden;
         </div>
 <!-- Bottom Navigation Bar -->
    <div class="container-items" style="margin-bottom: 0px;height:0px;">
-<!-- Upload and General Extract Button -->
-        <div class="action-buttons">
-            <button class="btn-drive" onclick="loadPCPDF()">
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M4 6l8.5 12H15L6.5 6H4m2.5 0L13 12h5.5L12 2 6.5 6M18.5 6H22l-8.5 12h3L18.5 6z"/>
-                </svg>
-                UPLOAD📁
-            </button>
-            
-            <button class="btn-view-extracted" id="general-extract-btn" onclick="extractGeneralPDF()" disabled>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"/>
-                </svg>
-                EXTRACT
-            </button>
-        </div>
+
 <button
         class="item-color"
         style="--color: #facc15"
@@ -1049,14 +1034,27 @@ overflow: hidden;
         <!-- Week Loading Buttons -->
         <div class="action-buttons">
 <!-- Input box -->
-<input type="text" id="WeekNoInput" placeholder="Enter Week No" style="margin-bottom: 8px; width: 100px; padding: 4px;">
+<input type="text" id="WeekNoInput" placeholder="Enter Week No" style="margin-bottom: 8px; width: 100px; padding: 4px;display:none;">
 
 <!-- Week buttons -->
-<button class="btn-drive" onclick="loadWeekPDF(1)">WEEK 1</button>
+<button class="btn-drive" onclick="loadWeekPDF(1)"style="display:none;">WEEK 1</button>
   
  </div>
 
-        
+        <!-- Upload and General Extract Button -->
+        <div class="action-buttons"style="display:none;">
+            <button class="btn-drive" onclick="loadPCPDF()">
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M4 6l8.5 12H15L6.5 6H4m2.5 0L13 12h5.5L12 2 6.5 6M18.5 6H22l-8.5 12h3L18.5 6z"/>
+                </svg>
+                UPLOAD📁
+            </button>
+            
+            <button class="btn-view-extracted" id="general-extract-btn" onclick="extractGeneralPDF()" disabled>
+                
+                EXTRACT
+            </button>
+        </div>
 
         <!-- PDF Viewer -->
         <div class="pdf-viewer-container" id="pdf-viewer-container"style="display:none;">
@@ -1118,7 +1116,7 @@ overflow: hidden;
         </div>
 
         <!-- Week Extraction Buttons -->
-        <div class="action-buttons">
+        <div class="action-buttons"style="display:none;">
             <button class="btn-view-extracted" id="extract-week-1-btn" onclick="extractWeek(1)" disabled>
                                 Extract Week 1
             </button>
