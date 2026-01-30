@@ -1,0 +1,3182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.10.0/dist/pptxgen.bundle.js"></script>
+<script src="https://unpkg.com/mammoth@1.4.8/mammoth.browser.min.js"></script>
+    <title>PDF Text & Image Extractor</title>
+    <style>
+        /* Beautiful Loader Styles */
+        .loader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader-container.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-content {
+            text-align: center;
+        }
+
+        .loader {
+            width: 80px;
+            height: 80px;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .loader-circle {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 4px solid transparent;
+            border-radius: 50%;
+            animation: rotate 1.5s linear infinite;
+        }
+
+        .loader-circle:nth-child(1) {
+            border-top-color: #ffffff;
+            border-right-color: #ffffff;
+        }
+
+        .loader-circle:nth-child(2) {
+            border-bottom-color: #ffffff;
+            border-left-color: #ffffff;
+            animation-delay: 0.5s;
+        }
+
+        .loader-inner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loader-text {
+            margin-top: 20px;
+            color: white;
+            font-size: 18px;
+            font-weight: 500;
+            text-align: center;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.7;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* PDF Viewer Styles */
+        .pdf-viewer-container {
+            display: none;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+        }
+/* From Uiverse.io by Cobp - Modified for Lab Page */
+    .container-items {
+      display: flex;
+      transform-style: preserve-3d;
+      transform: perspective(1000px);
+      gap: 10px;
+      padding: 10px 20px;
+      background: transparent;
+      border-radius: 15px;
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) perspective(1000px);
+      
+    }
+
+    .item-color {
+      position: relative;
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      border: none;
+      outline: none;
+      transition: 500ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
+      cursor: pointer;
+     border-radius:100%;
+
+      &::after {
+        position: absolute;
+        content: "";
+        inset: 0;
+        width: 20px;
+        height: 20px;
+        background-color: var(--color);
+        border-radius:100%;
+        transform: scale(1.1);
+        pointer-events: none;
+        transition: 500ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
+      }
+
+      &::before {
+        position: absolute;
+        content: attr(aria-color);
+        left: 50%;
+        bottom: 52px;
+        font-size: 12px;
+        font-family: 'Roboto', sans-serif;
+        font-weight: 600;
+        line-height: 16px;
+        transform: translateX(-50%);
+        padding: 6px 12px;
+        background-color: #2c3e50;
+        color: white;
+        border-radius: 8px;
+        pointer-events: none;
+        opacity: 0;
+        visibility: hidden;
+        transition: 500ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
+        white-space: nowrap;
+        z-index: 100000;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      }
+.item-color::after {
+    position: absolute;
+    content: attr(data-emoji);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    inset: 0;
+    width: 40px;
+    height: 30px;
+    font-size: 18px; /* Adjust emoji size */
+    border-radius: 8px;
+    pointer-events: none;
+    transform: scale(1.1);
+    transition: 500ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
+}
+
+      &:hover {
+        transform: scale(1.5);
+        z-index: 99999;
+
+        &::before {
+          opacity: 1;
+          visibility: visible;
+        }
+      }
+
+      &:active::after {
+        transform: scale(0.9);
+      }
+    }
+
+    .item-color:hover + * {
+      transform: scale(1.3);
+      z-index: 9999;
+    }
+
+    .item-color:hover + * + * {
+      transform: scale(1.15);
+      z-index: 999;
+    }
+
+    .item-color:has(+ *:hover) {
+      transform: scale(1.3);
+      z-index: 9999;
+    }
+
+    .item-color:has(+ * + *:hover) {
+      transform: scale(1.15);
+      z-index: 999;
+    }
+
+    /* Icon navigation buttons */
+    .nav-button-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid white;
+      border-radius: 50%;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-button-icon:hover {
+      background: white;
+      color: #3498db;
+      transform: scale(1.1);
+    }
+
+        .viewer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .viewer-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #4285f4;
+        }
+
+        .viewer-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-viewer {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            background: rgba(66, 133, 244, 0.2);
+            color: #7baaf7;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-viewer:hover {
+            background: rgba(66, 133, 244, 0.3);
+        }
+
+        .zoom-controls {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .zoom-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+            color: #e4e4e7;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .zoom-btn:hover {
+            background: rgba(66, 133, 244, 0.2);
+        }
+
+        .zoom-level {
+            min-width: 60px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #a1a1aa;
+        }
+
+        .page-input {
+            width: 60px;
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+            color: #e4e4e7;
+            text-align: center;
+        }
+
+        /* PDF Viewer Container */
+        .pdf-js-viewer-container {
+            width: 100%;
+            height: 600px;
+            overflow: auto;
+            background: #525659;
+            position: relative;
+        }
+
+        #pdf-canvas-container {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+        }
+
+        .canvas-container {
+            margin: 10px auto;
+            position: relative;
+            overflow: visible;
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Extraction Status Bar */
+        .extraction-status {
+            display: none;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .extraction-status.active {
+            display: block;
+        }
+
+        .status-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(99, 102, 241, 0.2);
+            border-top-color: #6366f1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .status-text {
+            color: #a1a1aa;
+            font-size: 0.9rem;
+        }
+
+        .status-progress {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .status-bar {
+            height: 100%;
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+            
+        }
+
+        .modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            width: 100%;
+            
+            height: 90vh;
+            background: white;
+            border-radius: 30px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border:10px solid black;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0px 0px;
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #a855f7;
+        }
+
+        .modal-close {
+            background:red;
+            color: #f87171;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(239, 68, 68, 0.3);
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .modal-pages-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-page {
+            min-width: 100%;
+            height: 100%;
+            overflow-y:hidden;
+            padding: 0px;
+            box-sizing: border-box;
+        }
+
+        .modal-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0px 0px;
+background: rgba(168, 85, 247, 0.18);
+            border-top: 0px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-nav-btn {
+            padding: 12px 24px;
+            border-radius: 0px;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background:transparent;
+            color: red;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);
+        }
+
+        .modal-nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .modal-page-info {
+            color: #a1a1aa;
+            font-size: 1rem;
+        }
+
+        /* Column Headers */
+        .column-header {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 0px;
+            text-align: center;
+        }
+
+        .column-header h3 {
+            margin: 0;
+            color: #a855f7;
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .column-header-icon {
+            font-size: 1.5rem;
+        }
+
+        /* Extracted Headings */
+        .extracted-heading {
+            font-size:18px;
+            color: #a855f7;
+            text-align: center;
+            margin: 0 0 0px 0;
+            padding: 15px;
+            background: rgba(168, 85, 247, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid #a855f7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* View Extracted Content Button */
+        .btn-view-extracted {
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            margin: 0 auto;
+        }
+
+        .btn-view-extracted:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);
+        }
+
+        .btn-view-extracted:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Rest of CSS */
+        .url-input-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .url-input-wrapper {
+            display: inline-flex;
+            gap: 10px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .url-input {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+            color: #e4e4e7;
+            font-size: 0.95rem;
+        }
+
+        .url-input:focus {
+            outline: none;
+            border-color: #6366f1;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-drive {
+            background: linear-gradient(135deg, #4285f4, #34a853);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-drive:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(66, 133, 244, 0.3);
+        }
+
+        .drop-zone {
+            border: 2px dashed #6366f1;
+            border-radius: 16px;
+            padding: 60px 40px;
+            text-align: center;
+            background: rgba(99, 102, 241, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+        }
+
+        .drop-zone:hover,
+        .drop-zone.dragover {
+            border-color: #a855f7;
+            background: rgba(168, 85, 247, 0.1);
+            transform: scale(1.01);
+        }
+
+        .drop-zone-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .drop-zone-text {
+            font-size: 1.2rem;
+            color: #d4d4d8;
+            margin-bottom: 10px;
+        }
+
+        .drop-zone-hint {
+            font-size: 0.9rem;
+            color: #71717a;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px 25px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #a855f7;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #a1a1aa;
+            margin-top: 5px;
+        }
+
+        .content-list {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .page-container {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background:blue;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color:white;
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #a855f7;
+        }
+
+        .page-info {
+            font-size: 0.9rem;
+            color: #71717a;
+        }
+
+        .two-column-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            padding: 0px;
+        }
+
+        @media (max-width: 992px) {
+            .two-column-layout {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                padding: 20px;
+            }
+        }
+
+        .text-column {
+            display: flex;
+            flex-direction: column;
+            gap: 0px;
+            border-right:10px solid rgba(168, 85, 247, 0.18);
+        }
+
+        .image-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            color: black;
+        }
+
+        .text-block {
+            background: white;
+            border-radius: 0px;
+            overflow: hidden;
+            color: black;
+        }
+
+        .text-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(34, 197, 94, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .block-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-text {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+        }
+
+        .badge-image {
+            background: rgba(99, 102, 241, 0.2);
+            color: #818cf8;
+        }
+
+        .block-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-edit {
+            background: rgba(99, 102, 241, 0.2);
+            color: #818cf8;
+        }
+
+        .btn-edit:hover {
+            background: rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-save {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+        }
+
+        .btn-save:hover {
+            background: rgba(34, 197, 94, 0.3);
+        }
+
+        .btn-cancel {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-download {
+            background: rgba(168, 85, 247, 0.2);
+            color: #c084fc;
+        }
+
+        .btn-download:hover {
+            background: rgba(168, 85, 247, 0.3);
+        }
+
+        .text-content {
+            padding: 20px;
+        }
+
+        .text-display {
+            white-space: pre-wrap;
+            line-height: 1.6;
+            color: black;
+            font-size: 17px;
+        }
+
+        .text-edit {
+            width: 100%;
+            min-height: 200px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            color: #e4e4e7;
+            font-family: inherit;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            resize: vertical;
+        }
+
+        .text-edit:focus {
+            outline: none;
+            border-color: #6366f1;
+        }
+
+        .image-block {
+            background:white;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius:0px;
+            overflow: hidden;
+            height:100%;
+        }
+
+        .image-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(99, 102, 241, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .image-info {
+            font-size: 0.85rem;
+            color: #71717a;
+        }
+
+.image-container {
+    width: 100%;
+height:88%;
+    aspect-ratio: 16 / 9;   /* change if needed */
+    background: white;
+    border-radius: 0px;
+    overflow: hidden;
+    
+}
+
+.image-container img {
+    width: 100%;
+    height: 80%;
+    object-fit: contain;    /* NO vertical crop */
+    display: block;
+overflow: hidden;
+}
+
+
+
+        .qr-result {
+            margin-top: 12px;
+            padding: 12px;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .qr-result-label {
+            color: #4ade80;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .qr-result-data {
+            color: #d4d4d8;
+            word-break: break-all;
+        }
+
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+            color: #a1a1aa;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(99, 102, 241, 0.2);
+            border-top-color: #6366f1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            color: #71717a;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 640px) {
+            h1 { font-size: 1.8rem; }
+            .drop-zone { padding: 40px 20px; }
+            .stat-item { padding: 10px 15px; }
+            .two-column-layout { padding: 15px; }
+            .modal-content { width: 95%; height: 95vh; }
+            .modal-header, .modal-nav { padding: 15px 20px; }
+            .extracted-heading { font-size: 1.4rem; padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loader -->
+    <div class="loader-container" id="loader">
+        <div class="loader-content">
+            <div class="loader">
+                <div class="loader-circle"></div>
+                <div class="loader-circle"></div>
+                <div class="loader-inner">PPT</div>
+            </div>
+            <div class="loader-text">Loading Content...</div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.worker.min.js"></script>
+    <script src="https://cozmo.github.io/jsQR/jsQR.js"></script>
+
+    <!-- Modal for extracted content -->
+    <div class="modal" id="extracted-content-modal">
+        <div class="modal-content">
+                   <div class="modal-body">
+                <div class="modal-pages-container" id="modal-pages-container">
+                    <!-- Pages will be inserted here -->
+                </div>
+            </div>
+            <div class="modal-nav"
+     style="position: relative; display: flex; align-items: center;">
+
+    <!-- Left group -->
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <button class="modal-nav-btn" id="modal-prev-btn" onclick="prevModalPage()">
+            ◀️
+        </button>
+
+        <div class="modal-page-info" id="modal-page-info">
+            SLIDE 1 of 1
+        </div>
+<!-- Bottom Navigation Bar -->
+   <div class="container-items" style="margin-bottom: 0px;height:0px;">
+
+<button
+        class="item-color"
+        style="--color: #facc15"
+
+        aria-color="📚Visual"
+
+        onclick="showIframe('https://dannyvanpoucke.be/wp-content/uploads/2020/12/surface_Sinc2D_25_Ens.gif')"
+      ></button>
+<button
+    class="item-color"
+    style="--color: #e11d48"
+    aria-color="📚WHITE BOARD"
+    onclick="showIframe('https://wbo.ophir.dev/boards/anonymous')"
+></button>
+
+<button
+        class="item-color"
+        style="--color: #facc15"
+
+        aria-color="📚Lesson Video"
+
+        onclick="showIframe('https://www.youtube.com/embed/7_SX4pTr3gk')"
+      ></button>
+
+      <button
+        class="item-color"
+        style="--color: #f472b6"
+        aria-color="📚JOIN MY QUIZZ"
+        onclick="showIframe('https://wayground.com/join?gc=52065078&source=liveDashboard')"
+      ></button>
+      
+      
+      <button
+        class="item-color"
+        style="--color: #84cc16"
+        aria-color="📚Practice Test"
+        onclick="openTest()"
+      ></button>
+    <button
+        class="item-color"
+        style="--color: #84cc16"
+        aria-color="📚Practice Test"
+        onclick="openTest()"
+      ></button>
+    <button
+        class="item-color"
+        style="--color: #84cc16"
+        aria-color="📚Practice Test"
+        onclick="openTest()"
+      ></button>
+    </div>
+
+    </div>
+
+    <!-- Close button (slightly left of center) -->
+    <button class="modal-close"
+        onclick="closeModal()"
+        style="
+            position: absolute;
+            left: 90%;display:none;
+            transform: translateX(-65%);background:red;
+        ">
+        ✖️
+    </button>
+
+    <!-- Right button -->
+    <button class="modal-nav-btn" id="modal-next-btn" onclick="nextModalPage()">
+        ▶️
+    </button>
+
+</div>
+
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Week Loading Buttons -->
+        <div class="action-buttons">
+<!-- Input box -->
+<input type="text" id="WeekNoInput" placeholder="Enter Week No" style="margin-bottom: 8px; width: 100px; padding: 4px;display:none;">
+
+<!-- Week buttons -->
+<button class="btn-drive" onclick="loadWeekPDF(1)"style="display:none;">WEEK 1</button>
+  
+ </div>
+
+        <!-- Upload and General Extract Button -->
+        <div class="action-buttons">
+            <button class="btn-drive" onclick="loadPCPDF()">
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M4 6l8.5 12H15L6.5 6H4m2.5 0L13 12h5.5L12 2 6.5 6M18.5 6H22l-8.5 12h3L18.5 6z"/>
+                </svg>
+                UPLOAD📁
+            </button>
+            
+            <button class="btn-view-extracted" id="general-extract-btn" onclick="extractGeneralPDF()" disabled>
+                
+                EXTRACT
+            </button>
+        </div>
+
+        <!-- PDF Viewer -->
+        <div class="pdf-viewer-container" id="pdf-viewer-container"style="display:none;">
+            <div class="viewer-header"style="display:none;">
+                <div class="viewer-title"style="display:none;">
+                    <svg width="24" height="24" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                    </svg>
+                    PDF Viewer
+                    <div class="extraction-status" id="extraction-status">
+                        <div class="status-content">
+                            <div class="status-spinner"></div>
+                            <div class="status-text" id="status-text">Extracting content...</div>
+                            <div class="status-progress">
+                                <div class="status-bar" id="status-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="viewer-controls">
+                    <div class="zoom-controls">
+                        <button class="zoom-btn" onclick="zoomOut()">-</button>
+                        <span class="zoom-level" id="zoom-level">100%</span>
+                        <button class="zoom-btn" onclick="zoomIn()">+</button>
+                    </div>
+                    <button class="btn-viewer" onclick="prevPage()">
+                        <svg width="16" height="16" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z"/>
+                        </svg>
+                        Prev
+                    </button>
+                    <span>Page: <input type="number" id="current-page" class="page-input" min="1" value="1" onchange="goToPage(this.value)"></span>
+                    <span id="total-pages">/ 1</span>
+                    <button class="btn-viewer" onclick="nextPage()">
+                        Next
+                        <svg width="16" height="16" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/>
+                        </svg>
+                    </button>
+                    <button class="btn-viewer" onclick="closeViewer()">
+                        <svg width="16" height="16" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+                        </svg>
+                        Close
+                    </button>
+                </div>
+            </div>
+            <div class="pdf-js-viewer-container"style="display:none;">
+                <div id="pdf-canvas-container"style="display:none;"></div>
+            </div>
+        </div>
+
+        <!-- Existing drop zone -->
+        <div class="drop-zone" id="drop-zone"style="display:none;">
+            <div class="drop-zone-icon">📁</div>
+            <div class="drop-zone-text">Drop your PDF here or click to browse</div>
+            <div class="drop-zone-hint">Supports PDF files up to 50MB</div>
+            <input type="file" id="file-input" accept=".pdf,application/pdf">
+        </div>
+
+        <!-- Week Extraction Buttons -->
+        <div class="action-buttons"style="display:none;">
+            <button class="btn-view-extracted" id="extract-week-1-btn" onclick="extractWeek(1)" disabled>
+                                Extract Week 1
+            </button>
+            
+        </div>
+
+        <div class="stats-bar" id="stats-bar" style="display: none;">
+            <div class="stat-item"style="display: none;">
+                <div class="stat-value" id="stat-pages"style="display: none;">0</div>
+                <div class="stat-label"style="display: none;">Pages</div>
+            </div>
+            <div class="stat-item"style="display: none;">
+                <div class="stat-value" id="stat-text"style="display: none;">0</div>
+                <div class="stat-label"style="display: none;">Text Blocks</div>
+            </div>
+            <div class="stat-item"style="display: none;">
+                <div class="stat-value" id="stat-images"style="display: none;">0</div>
+                <div class="stat-label"style="display: none;">Images</div>
+            </div>
+        </div>
+
+        <div id="content-container"style="display:none;"></div>
+    </div>
+
+    <script>
+    // State
+    let extractedContent = [];
+    let extractedHeadings = {}; // Store headings by page
+    let isLoading = false;
+    let currentPDF = null;
+    let currentPage = 1;
+    let totalPages = 1;
+    let scale = 1.0;
+    let pdfDocument = null;
+    let canvasContainer = null;
+    let canvases = [];
+    let isExtracting = false;
+    let pdfFileName = 'Extracted PDF';
+    
+    // Modal State
+    let modalCurrentPage = 1;
+    let modalTotalPages = 0;
+    let modalPagesContainer = null;
+
+    // Week tracking
+    let currentWeek = null;
+    let isCustomFileUploaded = false; // Track if file was uploaded via file dialog
+
+    // DOM Elements
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const statsBar = document.getElementById('stats-bar');
+    const contentContainer = document.getElementById('content-container');
+    const pdfViewerContainer = document.getElementById('pdf-viewer-container');
+    const currentPageInput = document.getElementById('current-page');
+    const totalPagesSpan = document.getElementById('total-pages');
+    const zoomLevelSpan = document.getElementById('zoom-level');
+    const extractionStatus = document.getElementById('extraction-status');
+    const statusText = document.getElementById('status-text');
+    const statusBar = document.getElementById('status-bar');
+    const modal = document.getElementById('extracted-content-modal');
+    const modalPagesContainerElem = document.getElementById('modal-pages-container');
+    const modalPrevBtn = document.getElementById('modal-prev-btn');
+    const modalNextBtn = document.getElementById('modal-next-btn');
+    const modalPageInfo = document.getElementById('modal-page-info');
+    const generalExtractBtn = document.getElementById('general-extract-btn');
+
+    // Week file paths
+    const weekFiles = {
+        1: 'APCSP PDF WEEK FILES/APCSP WEEK 1.pdf',
+        2: "APCSP PDF WEEK FILES/APCSP WEEK 2.pdf",
+    	3: "APCSP PDF WEEK FILES/APCSP WEEK 3.pdf",
+    	4: "APCSP PDF WEEK FILES/APCSP WEEK 4.pdf"
+    };
+
+    // Set worker source
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.worker.min.js';
+
+    // Initialize canvas container
+    canvasContainer = document.getElementById('pdf-canvas-container');
+
+    // Event Listeners
+    dropZone.addEventListener('click', () => fileInput.click());
+    
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('dragover');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        const file = e.dataTransfer.files[0];
+        if (file && file.type === 'application/pdf') {
+            pdfFileName = file.name.replace('.pdf', '');
+            currentWeek = null; // Reset week when loading custom file
+            isCustomFileUploaded = true;
+            loadAndProcessFile(file);
+        } else {
+            alert('Please drop a valid PDF file');
+        }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            pdfFileName = file.name.replace('.pdf', '');
+            currentWeek = null; // Reset week when loading custom file
+            isCustomFileUploaded = true; // Mark as custom file upload
+            loadAndProcessFile(file);
+        }
+    });
+
+    // Keyboard shortcuts for modal
+    document.addEventListener('keydown', (e) => {
+        if (modal.classList.contains('active')) {
+            if (e.key === 'ArrowLeft') {
+                prevModalPage();
+            } else if (e.key === 'ArrowRight') {
+                nextModalPage();
+            } else if (e.key === 'Escape') {
+                closeModal();
+            }
+        }
+    });
+
+    // Show loader on page load
+    document.addEventListener('DOMContentLoaded', async () => {
+        console.log('PDF Extractor is ready. Use the buttons above to load PDFs.');
+        // Show loader initially
+        showLoader();
+    });
+
+    // Loader functions
+    function showLoader() {
+        const loader = document.getElementById('loader');
+        if (loader) {
+            loader.classList.remove('hidden');
+            loader.style.display = 'flex';
+        }
+    }
+
+    function hideLoader() {
+        const loader = document.getElementById('loader');
+        if (loader) {
+            loader.classList.add('hidden');
+            setTimeout(() => {
+                loader.style.display = 'none';
+            }, 500);
+        }
+    }
+
+    // Hide loader when modal opens
+    function hideLoaderOnModalOpen() {
+        setTimeout(() => {
+            hideLoader();
+        }, 300);
+    }
+
+    // Fallback: hide loader after 10 seconds
+    setTimeout(() => {
+        hideLoader();
+    }, 10000);
+
+    // Load specific week PDF
+    async function loadWeekPDF(weekNumber) {
+        currentWeek = weekNumber;
+        isCustomFileUploaded = false; // Not a custom file upload
+        
+        const filePath = weekFiles[weekNumber];
+        
+        if (!filePath) {
+            alert(`Week ${weekNumber} file not configured`);
+            return;
+        }
+        
+        try {
+            // Show extraction status
+            showExtractionStatus(`Loading Week ${weekNumber} PDF...`);
+            
+            // Clear any existing content
+            clearCanvases();
+            contentContainer.innerHTML = '';
+            statsBar.style.display = 'none';
+            
+            // Disable all extract buttons initially
+            disableAllExtractButtons();
+            generalExtractBtn.disabled = true; // Disable general extract button for week files
+            
+            // Enable the corresponding extract button
+            const extractBtn = document.getElementById(`extract-week-${weekNumber}-btn`);
+            if (extractBtn) {
+                extractBtn.disabled = false;
+            }
+            
+            // Try to load from the specified path
+            console.log(`Loading Week ${weekNumber} from: ${filePath}`);
+            const response = await fetch(filePath);
+            
+            if (!response.ok) {
+                throw new Error(`Failed to load Week ${weekNumber} PDF: ${response.status} ${response.statusText}`);
+            }
+            
+            const arrayBuffer = await response.arrayBuffer();
+            pdfFileName = `APCSP WEEK ${weekNumber}`;
+            
+            // Update dropzone to show loading
+            dropZone.innerHTML = `
+                <div class="upload-icon">📄</div>
+                <div><strong>${pdfFileName}</strong></div>
+                <div class="file-info" style="color: #4CAF50;">Loading PDF...</div>
+            `;
+            dropZone.classList.add('file-loaded');
+            
+            // Use the existing function to load and process the PDF
+            await loadAndProcessPDF(arrayBuffer, pdfFileName);
+            
+        } catch (error) {
+            console.error(`Error loading Week ${weekNumber} PDF:`, error);
+            
+            // Try alternative paths
+            const alternativePaths = [
+                filePath,
+                `./${filePath}`,
+                filePath.replace('APCSP PDF WEEK FILES/', ''),
+                `pdf/${filePath}`,
+                `files/${filePath}`
+            ];
+            
+            let arrayBuffer = null;
+            let foundPath = null;
+            
+            // Try each possible path
+            for (const path of alternativePaths) {
+                try {
+                    console.log(`Trying alternative path: ${path}`);
+                    const response = await fetch(path);
+                    if (response.ok) {
+                        arrayBuffer = await response.arrayBuffer();
+                        foundPath = path;
+                        console.log(`Successfully loaded from: ${path}`);
+                        break;
+                    }
+                } catch (err) {
+                    console.log(`Failed to load from ${path}:`, err.message);
+                    // Continue to next path
+                }
+            }
+            
+            if (!arrayBuffer) {
+                alert(`Week ${weekNumber} PDF not found.\n\nPlease ensure the file "${filePath}" exists in the correct location.`);
+                hideExtractionStatus();
+                
+                // Reset dropzone
+                dropZone.innerHTML = `
+                    <div class="upload-icon">📁</div>
+                    <div>Drag & Drop PDF file here</div>
+                    <div class="file-info">or click to browse</div>
+                `;
+                dropZone.classList.remove('file-loaded');
+                return;
+            }
+            
+            // Continue with loading if found
+            pdfFileName = `APCSP WEEK ${weekNumber}`;
+            
+            // Update dropzone to show loaded file
+            dropZone.innerHTML = `
+                <div class="upload-icon">✅</div>
+                <div><strong>${pdfFileName}</strong></div>
+                <div class="file-info" style="color: #4CAF50;">PDF loaded successfully from ${foundPath}</div>
+            `;
+            dropZone.classList.add('file-loaded');
+            
+            // Use the existing function to load and process the PDF
+            await loadAndProcessPDF(arrayBuffer, pdfFileName);
+        }
+    }
+
+    // Extract content for specific week
+    function extractWeek(weekNumber) {
+        if (currentWeek !== weekNumber) {
+            alert(`Please load Week ${weekNumber} PDF first before extracting.`);
+            return;
+        }
+        
+        if (extractedContent.length === 0) {
+            alert('No content extracted yet. Please wait for extraction to complete.');
+            return;
+        }
+        
+        openModal();
+    }
+
+    // Extract general PDF (for file dialog uploads)
+    function extractGeneralPDF() {
+        if (!isCustomFileUploaded) {
+            alert('Please upload a PDF file using the UPLOAD button first.');
+            return;
+        }
+        
+        if (extractedContent.length === 0) {
+            alert('No content extracted yet. Please wait for extraction to complete.');
+            return;
+        }
+        
+        openModal();
+    }
+
+    // Disable all extract buttons
+    function disableAllExtractButtons() {
+        for (let i = 1; i <= 3; i++) {
+            const btn = document.getElementById(`extract-week-${i}-btn`);
+            if (btn) {
+                btn.disabled = true;
+            }
+        }
+        generalExtractBtn.disabled = true;
+    }
+
+    // Load and process file
+    async function loadAndProcessFile(file) {
+        try {
+            const arrayBuffer = await file.arrayBuffer();
+            currentWeek = null; // Reset week for custom files
+            isCustomFileUploaded = true; // Mark as custom file upload
+            await loadAndProcessPDF(arrayBuffer, file.name);
+        } catch (error) {
+            console.error('Error loading file:', error);
+            alert('Error loading PDF: ' + error.message);
+            showEmptyState();
+        }
+    }
+
+    // Load PDF from PC
+    async function loadPCPDF() {
+        fileInput.click();
+    }
+
+    // Main function to load and process PDF
+    async function loadAndProcessPDF(arrayBuffer, pdfName = 'PDF') {
+        try {
+            // Ensure viewer is visible
+            pdfViewerContainer.style.display = 'block';
+            pdfViewerContainer.style.opacity = '1';
+            
+            // Clear previous content
+            clearCanvases();
+            contentContainer.innerHTML = '';
+            statsBar.style.display = 'none';
+            
+            // Disable all extract buttons initially
+            disableAllExtractButtons();
+            
+            // Enable appropriate extract button based on file source
+            if (currentWeek) {
+                // Week PDF - enable week extract button
+                const extractBtn = document.getElementById(`extract-week-${currentWeek}-btn`);
+                if (extractBtn) {
+                    extractBtn.disabled = false;
+                }
+                generalExtractBtn.disabled = true; // Keep general extract disabled for week files
+            } else if (isCustomFileUploaded) {
+                // Custom file upload - enable general extract button
+                generalExtractBtn.disabled = false;
+            }
+            
+            // Show extraction status
+            showExtractionStatus('Loading PDF...');
+            
+            // Load PDF for viewing FIRST
+            await displayPDFInViewer(arrayBuffer);
+            
+            // Start extraction in the background
+            startExtractionInBackground(arrayBuffer);
+            
+            // Update dropzone to show loaded file
+            dropZone.innerHTML = `
+                <div class="upload-icon">✅</div>
+                <div><strong>${pdfFileName}</strong></div>
+                <div class="file-info" style="color: #4CAF50;">PDF loaded successfully</div>
+            `;
+            dropZone.classList.add('file-loaded');
+            
+        } catch (error) {
+            console.error('Error loading PDF:', error);
+            alert('Error loading PDF: ' + error.message);
+            hideExtractionStatus();
+            showEmptyState();
+            
+            // Reset dropzone on error
+            dropZone.innerHTML = `
+                <div class="upload-icon">📁</div>
+                <div>Drag & Drop PDF file here</div>
+                <div class="file-info">or click to browse</div>
+            `;
+            dropZone.classList.remove('file-loaded');
+        }
+    }
+
+    // Start extraction in background
+    async function startExtractionInBackground(arrayBuffer) {
+        if (isExtracting) return;
+        
+        isExtracting = true;
+        showExtractionStatus('Extracting text...');
+        
+        try {
+            // Extract content from PDF
+            await extractFromPdf(arrayBuffer);
+            
+            // Update UI with extracted content
+            updateStats(totalPages);
+            renderContent();
+            
+            // Hide extraction status
+            setTimeout(() => {
+                hideExtractionStatus();
+                isExtracting = false;
+            }, 1000);
+            
+        } catch (error) {
+            console.error('Error during extraction:', error);
+            statusText.textContent = 'Extraction failed';
+            statusBar.style.background = '#ef4444';
+            
+            setTimeout(() => {
+                hideExtractionStatus();
+                isExtracting = false;
+            }, 3000);
+        }
+    }
+
+    // Show extraction status
+    function showExtractionStatus(message) {
+        extractionStatus.classList.add('active');
+        statusText.textContent = message;
+        statusBar.style.width = '0%';
+    }
+
+    // Update extraction progress
+    function updateExtractionProgress(progress, message) {
+        statusText.textContent = message;
+        statusBar.style.width = `${progress}%`;
+    }
+
+    // Hide extraction status
+    function hideExtractionStatus() {
+        extractionStatus.classList.remove('active');
+    }
+
+    // Display PDF in viewer - UPDATED to ensure PDF is rendered
+    async function displayPDFInViewer(arrayBuffer) {
+        try {
+            console.log('Starting PDF display...');
+            
+            // Clear previous canvases
+            clearCanvases();
+            
+            // Show loading message in canvas container
+            canvasContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">Loading PDF...</div>';
+            
+            // Load the PDF
+            const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+            pdfDocument = await loadingTask.promise;
+            
+            totalPages = pdfDocument.numPages;
+            console.log(`PDF loaded. Total pages: ${totalPages}`);
+            
+            totalPagesSpan.textContent = ` / ${totalPages}`;
+            currentPageInput.value = 1;
+            currentPageInput.max = totalPages;
+            
+            // Reset zoom
+            scale = 1.5; // Slightly larger default scale for better visibility
+            updateZoomLevel();
+            
+            // Force viewer to be visible
+            pdfViewerContainer.style.display = 'block';
+            pdfViewerContainer.style.visibility = 'visible';
+            pdfViewerContainer.style.opacity = '1';
+            pdfViewerContainer.style.height = 'auto';
+            
+            // Clear loading message
+            canvasContainer.innerHTML = '';
+            
+            // Render first page immediately for quick display
+            await renderPDFPage(1);
+            
+            // Scroll to viewer to make sure it's visible
+            setTimeout(() => {
+                pdfViewerContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 300);
+            
+            // Continue rendering other pages in background
+            renderRemainingPages();
+            
+            console.log('PDF displayed in viewer successfully');
+            
+        } catch (error) {
+            console.error('Error displaying PDF:', error);
+            canvasContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: #f44336;">Error loading PDF. Please try again.</div>';
+            throw error;
+        }
+    }
+
+    // Clear all canvases
+    function clearCanvases() {
+        canvasContainer.innerHTML = '';
+        canvases = [];
+    }
+
+    // Render remaining pages in background
+    async function renderRemainingPages() {
+        if (!pdfDocument || totalPages <= 1) return;
+        
+        for (let i = 2; i <= totalPages; i++) {
+            await renderPDFPage(i);
+        }
+    }
+
+    // Render a single PDF page - UPDATED for better visibility
+    async function renderPDFPage(pageNum) {
+        if (!pdfDocument) return;
+        
+        try {
+            const page = await pdfDocument.getPage(pageNum);
+            const viewport = page.getViewport({ scale: scale });
+            
+            // Create canvas container
+            const pageContainer = document.createElement('div');
+            pageContainer.className = 'canvas-container';
+            pageContainer.style.width = `${viewport.width}px`;
+            pageContainer.style.height = `${viewport.height}px`;
+            pageContainer.style.margin = '0 auto 30px auto';
+            pageContainer.style.boxShadow = '0 6px 16px rgba(0,0,0,0.15)';
+            pageContainer.style.border = '1px solid #d1d5db';
+            pageContainer.style.borderRadius = '12px';
+            pageContainer.style.overflow = 'hidden';
+            pageContainer.style.backgroundColor = 'white';
+            pageContainer.style.position = 'relative';
+            
+            // Create canvas
+            const canvas = document.createElement('canvas');
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            canvas.style.width = `${viewport.width}px`;
+            canvas.style.height = `${viewport.height}px`;
+            canvas.style.display = 'block';
+            canvas.style.backgroundColor = 'white';
+            
+            // Store canvas reference
+            canvases[pageNum - 1] = { canvas, page, viewport };
+            
+            // Add to container
+            pageContainer.appendChild(canvas);
+            canvasContainer.appendChild(pageContainer);
+            
+            // Render page
+            const renderContext = {
+                canvasContext: canvas.getContext('2d'),
+                viewport: viewport,
+                background: 'white'
+            };
+            
+            await page.render(renderContext).promise;
+            
+            // Add page number
+            const pageNumDiv = document.createElement('div');
+            pageNumDiv.style.position = 'absolute';
+            pageNumDiv.style.bottom = '15px';
+            pageNumDiv.style.right = '15px';
+            pageNumDiv.style.padding = '8px 15px';
+            pageNumDiv.style.background = 'rgba(0, 0, 0, 0.8)';
+            pageNumDiv.style.color = 'white';
+            pageNumDiv.style.borderRadius = '6px';
+            pageNumDiv.style.fontSize = '14px';
+            pageNumDiv.style.fontWeight = 'bold';
+            pageNumDiv.textContent = `Page ${pageNum}`;
+            pageContainer.appendChild(pageNumDiv);
+            
+            console.log(`Page ${pageNum} rendered at ${viewport.width}x${viewport.height}`);
+            
+        } catch (error) {
+            console.error(`Error rendering page ${pageNum}:`, error);
+            
+            // Create error placeholder
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'canvas-container';
+            errorDiv.style.width = '100%';
+            errorDiv.style.height = '400px';
+            errorDiv.style.margin = '0 auto 30px auto';
+            errorDiv.style.boxShadow = '0 6px 16px rgba(0,0,0,0.15)';
+            errorDiv.style.border = '2px dashed #ef4444';
+            errorDiv.style.borderRadius = '12px';
+            errorDiv.style.overflow = 'hidden';
+            errorDiv.style.backgroundColor = '#fef2f2';
+            errorDiv.style.display = 'flex';
+            errorDiv.style.alignItems = 'center';
+            errorDiv.style.justifyContent = 'center';
+            errorDiv.style.flexDirection = 'column';
+            errorDiv.style.padding = '20px';
+            
+            errorDiv.innerHTML = `
+                <div style="font-size: 48px; color: #ef4444; margin-bottom: 16px;">❌</div>
+                <div style="font-size: 16px; color: #7f1d1d; font-weight: bold; margin-bottom: 8px;">Error Loading Page ${pageNum}</div>
+                <div style="font-size: 14px; color: #991b1b; text-align: center;">${error.message || 'Unknown error'}</div>
+            `;
+            
+            canvasContainer.appendChild(errorDiv);
+        }
+    }
+
+    // Re-render all pages with new scale
+    async function rerenderAllPages() {
+        if (!pdfDocument) return;
+        
+        clearCanvases();
+        for (let i = 1; i <= totalPages; i++) {
+            await renderPDFPage(i);
+        }
+    }
+
+    // Zoom functions
+    function zoomIn() {
+        scale = Math.min(scale + 0.1, 3.0);
+        updateZoomLevel();
+        rerenderAllPages();
+    }
+
+    function zoomOut() {
+        scale = Math.max(scale - 0.1, 0.5);
+        updateZoomLevel();
+        rerenderAllPages();
+    }
+
+    function updateZoomLevel() {
+        const percent = Math.round(scale * 100);
+        zoomLevelSpan.textContent = `${percent}%`;
+    }
+
+    // PDF viewer navigation
+    function prevPage() {
+        if (currentPage > 1) {
+            currentPage--;
+            currentPageInput.value = currentPage;
+            scrollToPage(currentPage);
+        }
+    }
+
+    function nextPage() {
+        if (currentPage < totalPages) {
+            currentPage++;
+            currentPageInput.value = currentPage;
+            scrollToPage(currentPage);
+        }
+    }
+
+    function goToPage(page) {
+        const pageNum = parseInt(page);
+        if (pageNum >= 1 && pageNum <= totalPages && pageNum !== currentPage) {
+            currentPage = pageNum;
+            currentPageInput.value = currentPage;
+            scrollToPage(currentPage);
+        }
+    }
+
+    function scrollToPage(pageNum) {
+        const pageIndex = pageNum - 1;
+        const pageContainers = canvasContainer.getElementsByClassName('canvas-container');
+        
+        if (pageContainers[pageIndex]) {
+            pageContainers[pageIndex].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    function closeViewer() {
+        pdfViewerContainer.style.display = 'none';
+        if (pdfDocument) {
+            pdfDocument.destroy();
+            pdfDocument = null;
+        }
+        clearCanvases();
+        hideExtractionStatus();
+        isExtracting = false;
+        
+        // Reset dropzone
+        dropZone.innerHTML = `
+            <div class="upload-icon">📁</div>
+            <div>Drag & Drop PDF file here</div>
+            <div class="file-info">or click to browse</div>
+        `;
+        dropZone.classList.remove('file-loaded');
+    }
+
+    // Extract headings from text content
+    function extractHeadingsFromText(text) {
+        // Look for lines that start with # (markdown-style headings)
+        const lines = text.split('\n');
+        const headings = [];
+        
+        for (const line of lines) {
+            const trimmedLine = line.trim();
+            // Check if line starts with # and has some text after it
+            if (trimmedLine.startsWith('#') && trimmedLine.length > 2) {
+                // Remove the # symbol and any extra spaces
+                const headingText = trimmedLine.replace(/^#+\s*/, '').trim();
+                if (headingText.length > 0) {
+                    headings.push(headingText);
+                }
+            }
+        }
+        
+        return headings.length > 0 ? headings[0] : null; // Return first heading found
+    }
+
+    // Modal Functions
+    function openModal() {
+        if (extractedContent.length === 0) {
+            alert('No content extracted yet. Please wait for extraction to complete.');
+            return;
+        }
+        
+        // Group content by page for modal
+        const pages = {};
+        extractedContent.forEach(item => {
+            if (!pages[item.pageNumber]) {
+                pages[item.pageNumber] = {
+                    textBlocks: [],
+                    images: []
+                };
+            }
+            
+            if (item.type === 'text') {
+                pages[item.pageNumber].textBlocks.push(item);
+            } else if (item.type === 'image') {
+                pages[item.pageNumber].images.push(item);
+            }
+        });
+        
+        // Create modal pages
+        modalPagesContainerElem.innerHTML = '';
+        modalTotalPages = Object.keys(pages).length;
+        
+        Object.keys(pages).sort((a, b) => a - b).forEach(pageNum => {
+            const pageData = pages[pageNum];
+            const pageDiv = document.createElement('div');
+            pageDiv.className = 'modal-page';
+            pageDiv.innerHTML = createModalPageHTML(pageNum, pageData);
+            modalPagesContainerElem.appendChild(pageDiv);
+        });
+        
+        // Reset to first page
+        modalCurrentPage = 1;
+        updateModalPosition();
+        updateModalNav();
+        
+        // Show modal
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        
+        // Hide loader when modal is loaded
+        hideLoaderOnModalOpen();
+    }
+
+    function closeModal() {
+        modal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    function createModalPageHTML(pageNum, pageData) {
+        // Get heading for this page
+        const pageHeading = extractedHeadings[pageNum] || `Page ${pageNum}`;
+        
+        let html = `
+            <div class="page-container" style="margin: 0;">
+                
+                <div class="two-column-layout">
+                    <!-- Text Column with Extracted Heading -->
+                    <div class="text-column">
+        `;
+        
+        // Add text blocks
+        pageData.textBlocks.forEach((item, index) => {
+            html += createModalTextBlockHTML(item, index, pageNum);
+        });
+        
+        html += `
+                    </div>
+                    
+                    <!-- Image Column with Extracted Heading -->
+                    <div class="image-column">
+        `;
+        
+        // Add images
+        pageData.images.forEach((item, index) => {
+            html += createModalImageBlockHTML(item, index, pageNum);
+        });
+        
+        html += `
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        return html;
+    }
+
+function createModalTextBlockHTML(item, index, pageNum) {
+    const isEditing = item.isEditing;
+    // Get heading for this page
+    const pageHeading = extractedHeadings[pageNum] || `Page ${pageNum}`;
+    
+    // Only process the FIRST text block of each page
+    if (index === 0) {
+        // For the FIRST text block, show heading and 3 sentences
+        
+        // Get the specific content for THIS text block
+        const textContent = item.content;
+        
+        // Find the position of the heading in the text
+        const headingPosition = textContent.indexOf(pageHeading);
+        
+        let textAfterHeading = textContent;
+        
+        if (headingPosition !== -1) {
+            // Extract text that comes AFTER the heading
+            textAfterHeading = textContent.substring(headingPosition + pageHeading.length);
+            
+            // Clean up: remove any remaining heading text and extra whitespace
+            textAfterHeading = textAfterHeading.replace(/^[#\s]*/, '').trim();
+            
+            // If textAfterHeading is empty or too short, use the original content
+            if (textAfterHeading.length < 50) {
+                textAfterHeading = textContent;
+            }
+        }
+        
+        // Improved sentence extraction: split by period followed by space or newline
+        const sentences = textAfterHeading.split(/(?<=[.!?])\s+/).filter(s => s.trim().length > 0);
+        
+        // Take first 3 meaningful sentences (at least 20 characters) that come AFTER heading
+        const firstThreeSentences = sentences
+            .filter(sentence => {
+                const trimmed = sentence.trim();
+                return trimmed.length >= 20 && 
+                       !trimmed.startsWith('#') && // Not another heading
+                       !trimmed.toLowerCase().includes(pageHeading.toLowerCase()); // Not the heading itself
+            })
+            .slice(0, 3);
+        
+        let displayTextHTML;
+        if (firstThreeSentences.length > 0) {
+            // Create HTML with each sentence on a new line (escape content but not the <br> tags)
+            const escapedSentences = firstThreeSentences.map(sentence => 
+                escapeHtml(sentence.trim())
+            );
+            displayTextHTML = escapedSentences.join('<br><br>');
+        } else {
+            // Fallback: use the first paragraph after heading or first 150 chars
+            const firstParagraph = textAfterHeading.split('\n\n')[0] || textAfterHeading.slice(0, 150);
+            displayTextHTML = escapeHtml(firstParagraph.trim());
+        }
+        
+        // Create the combined text
+        const combinedText = `<div style="margin-bottom:0px; font-weight: bold; color: black;height:500px;overflow-y:auto;">
+                                 ${displayTextHTML}
+                              </div>
+                              <hr style="border: none; height: 2px; background: linear-gradient(90deg, #a855f7, #6366f1); margin: 0px 0;">`;
+        
+        return `
+            <div class="text-block">
+                <!-- TOP ROW: Text99 + Page Heading + Edit Button -->
+                <div style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom:0px;
+                    gap:0px;
+                    flex-wrap: wrap;
+                    background: rgba(168, 85, 247, 0.18);
+                    border-radius: 0px;
+                    padding: 10px;
+                    border-right:6px solid white;
+                ">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span class="block-badge badge-text">📝 Text</span>
+                    </div>
+                    <div style="
+                        font-family: 'Times New Roman', Times, serif;
+                        font-size: 26px;
+                        font-weight: bold;
+                        color: #2c3e50;
+                        text-align: center;
+                        flex: 1;
+                    ">
+                        ${escapeHtml(pageHeading)}
+                    </div>
+                    <div class="block-actions">
+                        ${isEditing ? `
+                            <button class="btn btn-save" onclick="saveTextInModal(${pageNum}, ${index})">💾 Save</button>
+                            <button class="btn btn-cancel" onclick="cancelEditInModal(${pageNum}, ${index})">✖ Cancel</button>
+                        ` : `
+<button class="btn btn-edit"
+        onclick="openNotesModal(${pageNum})">
+    ✏️ NOTES PANEL
+</button>
+                        `}
+                    </div>
+                </div>
+                
+                <!-- SINGLE CONTENT AREA with 3 sentences on separate lines + full text -->
+                <div class="text-content">
+                    ${isEditing ? `
+                        <textarea class="text-edit" id="modal-textarea-${pageNum}-${index}">${escapeHtml(item.content)}</textarea>
+                    ` : `
+                        <div style="
+                            font-family: 'Times New Roman', Times, serif;
+                            font-size: 26px;
+                            line-height: 1.3;
+                            color: black;
+                            padding: 5px;
+                            background: white;
+                            border-radius: 15px;
+                            text-align: justify;
+                            text-justify: inter-word;
+                            overflow-wrap: break-word;
+                            hyphens: auto;
+                            border-left:0px solid #a855f7;
+                            margin: 0px 0;
+                            color:black;">
+                            ${combinedText}
+                        </div>
+                    `}
+                </div>
+            </div>
+        `;
+    } else {
+        // SKIP other text blocks on the same page - return empty string
+        return '';
+    }
+}
+
+function createModalImageBlockHTML(item, index, pageNum) {
+    // Get heading for this page
+    const pageHeading = extractedHeadings[pageNum] || `Page ${pageNum}`;
+    
+    // Create unique IDs for each slide to avoid DOM conflicts
+    const iframeWrapperId = `iframe-wrapper-${pageNum}`;
+    const iframeId = `SlideIframe-${pageNum}`;
+    const imageId = `SlideImage-${pageNum}`;
+    
+    return `
+<div class="image-block">
+    <!-- TOP ROW: Page Heading + Download Button -->
+    <div style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0px;
+        gap: 0px;
+        flex-wrap: wrap;
+        background: rgba(168, 85, 247, 0.18);
+        border-radius: 0px;
+        padding:10px;
+    ">
+        <div style="
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 26px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-align: left;
+            flex: 1;
+        ">
+            ${escapeHtml(pageHeading)}
+        </div>
+        <div class="block-actions">
+            <button class="btn btn-download" onclick="downloadImageInModal(${pageNum}, ${index})">
+                ⬇️ DOWNLOAD .PPTX
+            </button>
+        </div>
+    </div>
+    
+    <div class="image-container" style="position: relative;">
+        <!-- Hidden iframe with close button -->
+<div id="${iframeWrapperId}" 
+     style="
+        display:none;
+        position: relative;
+        height:100%;
+        width:97%;
+        overflow:hidden;           /* 🚫 no outer scroll */
+        margin-top:10px;
+        margin-left:10px;
+     ">
+
+    <button 
+        onclick="closeIframe(${pageNum})"
+        style="
+            position:absolute;
+            top:5px;
+            right:5px;
+            z-index:1000;
+            background:red;
+            color:white;
+            border:none;
+            border-radius:50%;
+            width:30px;
+            height:30px;
+            cursor:pointer;
+            font-weight:bold;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:16px;
+        ">✖</button>
+
+    <iframe id="${iframeId}"
+        style="
+            width:100%;
+            height:90%;
+            border:none;
+            overflow-y:auto;
+            overflow-x:hidden;     /* 🚫 remove X scrollbar */
+        ">
+    </iframe>
+</div>
+
+        <img id="${imageId}" src="${item.content}" alt="Extracted image from page ${item.pageNumber}" style="width:100%; border-radius: 0px;">
+
+    </div>
+
+    ${item.qrData ? `
+        <div class="text-content">
+            <div class="qr-result">
+                <div class="qr-result-label">🔍 QR Code Detected:</div>
+                <div class="qr-result-data">${escapeHtml(item.qrData)}</div>
+            </div>
+        </div>
+    ` : ''}
+</div>
+    `;
+}
+    // Open notes modal for specific page
+    function openNotesModal(pageNum) {
+        // Find the text content for this page
+        const pageTextBlocks = extractedContent.filter(item => 
+            item.pageNumber == pageNum && item.type === 'text'
+        );
+        
+        if (pageTextBlocks.length === 0) {
+            alert('No text content found for this page.');
+            return;
+        }
+        
+        // Get the first text block (main content)
+        const textBlock = pageTextBlocks[0];
+        const textContent = textBlock.content;
+        
+        // Get heading for this page
+        const pageHeading = extractedHeadings[pageNum] || `Page ${pageNum}`;
+        
+        // Find the position of the heading in the text
+        const headingPosition = textContent.indexOf(pageHeading);
+        let notesContent = textContent;
+        
+        if (headingPosition !== -1) {
+            // Extract text that comes AFTER the heading
+            notesContent = textContent.substring(headingPosition + pageHeading.length);
+            notesContent = notesContent.replace(/^[#\s]*/, '').trim();
+            
+            if (notesContent.length < 50) {
+                notesContent = textContent;
+            }
+        }
+        
+        // Create or update the notes modal
+        let notesModal = document.getElementById('NotesText');
+        
+        // If modal doesn't exist, create it
+        if (!notesModal) {
+            notesModal = document.createElement('div');
+            notesModal.id = 'NotesText';
+            notesModal.style.cssText = `
+                display: none;
+                position: fixed;
+                top: 1%;
+                left: 1%;
+                width: 48%;
+                height: 85%;
+                background:transparent;
+                z-index: 9999;
+                justify-content: center;
+                align-items: center;
+                border-top-left-radius: 30px;
+                overflow-y:hidden;
+            `;
+            document.body.appendChild(notesModal);
+        }
+        
+        // Update modal content with current page's notes
+        notesModal.innerHTML = `
+            <div style="
+                background: white;
+                width: 100%;
+                max-height: 81%;
+                margin: auto;
+                padding: 20px;
+                border-radius: 8px;
+                position: relative;
+                overflow-y:hidden;
+                 border-top-left-radius: 30px;
+            ">
+                <!-- Top-right X close -->
+                <span onclick="closeNotesModal()"
+                      style="position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 26px; font-weight: bold; color: red;">
+                    &times;
+                </span>
+                
+                <!-- Modal Header -->
+                <div style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #a855f7;">
+                    <h2 style="margin: 0; color: #2c3e50; font-family: 'Times New Roman', Times, serif;">
+                        📝 Notes - ${escapeHtml(pageHeading)}
+                    </h2>
+                    
+                </div>
+                
+                <!-- Modal Content -->
+                <div style="
+                    font-family: 'Times New Roman', Times, serif;
+                    font-size: 20px;
+                    line-height: 1.6;
+                    color: #333;
+                    max-height: 500px;
+                    overflow-y: auto;
+                    padding: 10px;
+                    background: white;
+                    border-radius: 30px;
+                ">
+                    ${escapeHtml(notesContent).replace(/\n/g, '<br>')}
+                </div>
+                
+                <!-- Bottom Close Button -->
+                <div style="text-align: right; margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee;">
+                    <button onclick="closeNotesModal()"
+                            style="padding: 8px 20px; border: none; background: #a855f7; color: white; 
+                                   cursor: pointer; border-radius: 4px; font-size: 16px; font-weight: bold;">
+                        Close
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // Show the modal
+        notesModal.style.display = 'flex';
+        
+        // Store current page number for reference if needed
+        notesModal.dataset.pageNum = pageNum;
+    }
+
+    // Close notes modal
+    function closeNotesModal() {
+        const notesModal = document.getElementById('NotesText');
+        if (notesModal) {
+            notesModal.style.display = 'none';
+        }
+    }
+
+    // Modal-specific edit functions
+    function startEditInModal(pageNum, index) {
+        const item = findItemByPageAndIndex(pageNum, index, 'text');
+        if (item) {
+            item.isEditing = true;
+            updateModalContent(pageNum);
+        }
+    }
+
+    function saveTextInModal(pageNum, index) {
+        const item = findItemByPageAndIndex(pageNum, index, 'text');
+        if (item) {
+            const textarea = document.getElementById(`modal-textarea-${pageNum}-${index}`);
+            if (textarea) {
+                item.content = textarea.value;
+                item.isEditing = false;
+                updateModalContent(pageNum);
+            }
+        }
+    }
+
+    function cancelEditInModal(pageNum, index) {
+        const item = findItemByPageAndIndex(pageNum, index, 'text');
+        if (item) {
+            item.isEditing = false;
+            updateModalContent(pageNum);
+        }
+    }
+
+    function downloadImageInModal(pageNum, index) {
+        const item = findItemByPageAndIndex(pageNum, index, 'image');
+        if (item) {
+            const link = document.createElement('a');
+            link.href = item.content;
+            link.download = `image-page${item.pageNumber}-${Date.now()}.png`;
+            link.click();
+        }
+    }
+
+    function updateModalContent(pageNum) {
+        // Find the modal page and update it
+        const pageData = {
+            textBlocks: extractedContent.filter(item => 
+                item.pageNumber == pageNum && item.type === 'text'
+            ),
+            images: extractedContent.filter(item => 
+                item.pageNumber == pageNum && item.type === 'image'
+            )
+        };
+        
+        const modalPages = modalPagesContainerElem.children;
+        for (let i = 0; i < modalPages.length; i++) {
+            const pageDiv = modalPages[i];
+            const pageHeader = pageDiv.querySelector('.page-title');
+            if (pageHeader && pageHeader.textContent.includes(`Page ${pageNum}`)) {
+                pageDiv.innerHTML = createModalPageHTML(pageNum, pageData);
+                break;
+            }
+        }
+    }
+
+    function prevModalPage() {
+        if (modalCurrentPage > 1) {
+            modalCurrentPage--;
+            updateModalPosition();
+            updateModalNav();
+        }
+    }
+
+    function nextModalPage() {
+        if (modalCurrentPage < modalTotalPages) {
+            modalCurrentPage++;
+            updateModalPosition();
+            updateModalNav();
+        }
+    }
+
+    function updateModalPosition() {
+        const offset = -(modalCurrentPage - 1) * 100;
+        modalPagesContainerElem.style.transform = `translateX(${offset}%)`;
+    }
+
+    function updateModalNav() {
+modalPageInfo.textContent = `Page ${modalCurrentPage} of ${modalTotalPages}`;
+        modalPrevBtn.disabled = modalCurrentPage === 1;
+        modalNextBtn.disabled = modalCurrentPage === modalTotalPages;
+    }
+
+    // Extract content from PDF
+    async function extractFromPdf(arrayBuffer) {
+        const typedArray = new Uint8Array(arrayBuffer);
+        
+        const pdf = await pdfjsLib.getDocument({ data: typedArray }).promise;
+        const totalPages = pdf.numPages;
+        
+        console.log('PDF loaded, pages:', totalPages);
+        
+        extractedContent = [];
+        extractedHeadings = {};
+        let globalOrder = 0;
+
+        for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+            // Update progress
+            const progress = Math.round((pageNum / totalPages) * 100);
+            updateExtractionProgress(progress, `Processing page ${pageNum} of ${totalPages}...`);
+            
+            const page = await pdf.getPage(pageNum);
+            console.log('Processing page:', pageNum);
+            
+            // Extract text
+            try {
+                const textContent = await page.getTextContent();
+                const textByLine = {};
+                
+                console.log('Text items found:', textContent.items.length);
+                
+                textContent.items.forEach(item => {
+                    if (item.str && item.str.trim()) {
+                        const y = Math.round(item.transform[5]);
+                        if (!textByLine[y]) textByLine[y] = [];
+                        textByLine[y].push(item.str);
+                    }
+                });
+
+                const sortedYs = Object.keys(textByLine).map(Number).sort((a, b) => b - a);
+                const lines = sortedYs.map(y => textByLine[y].join(' ')).filter(line => line.trim());
+                
+                if (lines.length > 0) {
+                    const pageText = lines.join('\n');
+                    
+                    // Extract heading from this page's text
+                    const heading = extractHeadingsFromText(pageText);
+                    if (heading) {
+                        extractedHeadings[pageNum] = heading;
+                    }
+                    
+                    extractedContent.push({
+                        id: `text-${pageNum}-${globalOrder}`,
+                        type: 'text',
+                        content: pageText,
+                        pageNumber: pageNum,
+                        globalOrder: globalOrder++,
+                        isEditing: false
+                    });
+                    console.log('Added text block with', lines.length, 'lines');
+                    if (heading) {
+                        console.log('Extracted heading:', heading);
+                    }
+                }
+            } catch (textErr) {
+                console.error('Text extraction error:', textErr);
+            }
+
+            // Extract images
+            try {
+                updateExtractionProgress(progress, `Extracting images from page ${pageNum}...`);
+                
+                const operatorList = await page.getOperatorList();
+                
+                console.log('Operator list length:', operatorList.fnArray.length);
+
+                for (let i = 0; i < operatorList.fnArray.length; i++) {
+                    const op = operatorList.fnArray[i];
+                    
+                    // Check for image operations (82, 85, 88)
+                    if (op === 82 || op === 85 || op === 88) {
+                        const imageName = operatorList.argsArray[i][0];
+                        console.log('Found image:', imageName, 'op:', op);
+                        
+                        try {
+                            const imageData = await new Promise((resolve, reject) => {
+                                const timeout = setTimeout(() => reject(new Error('Timeout')), 5000);
+                                page.objs.get(imageName, (img) => {
+                                    clearTimeout(timeout);
+                                    resolve(img);
+                                });
+                            });
+
+                            if (imageData) {
+                                console.log('Image data:', imageData.width, 'x', imageData.height, 'data length:', imageData.data?.length);
+                                
+                                if (imageData.data && imageData.width && imageData.height) {
+                                    const dataUrl = imageToDataUrl(imageData);
+                                    const qrData = decodeQR(imageData);
+                                    
+                                    extractedContent.push({
+                                        id: `image-${pageNum}-${globalOrder}`,
+                                        type: 'image',
+                                        content: dataUrl,
+                                        pageNumber: pageNum,
+                                        globalOrder: globalOrder++,
+                                        width: imageData.width,
+                                        height: imageData.height,
+                                        qrData: qrData
+                                    });
+                                    console.log('Added image block');
+                                } else if (imageData.src) {
+                                    // Handle already-decoded images (like JPEGs)
+                                    extractedContent.push({
+                                        id: `image-${pageNum}-${globalOrder}`,
+                                        type: 'image',
+                                        content: imageData.src,
+                                        pageNumber: pageNum,
+                                        globalOrder: globalOrder++,
+                                        width: imageData.width || 100,
+                                        height: imageData.height || 100,
+                                        qrData: null
+                                    });
+                                    console.log('Added pre-decoded image');
+                                }
+                            }
+                        } catch (imgErr) {
+                            console.warn('Failed to extract image:', imageName, imgErr);
+                        }
+                    }
+                }
+            } catch (opErr) {
+                console.error('Operator list error:', opErr);
+            }
+        }
+
+        // Sort by global order
+        extractedContent.sort((a, b) => a.globalOrder - b.globalOrder);
+        
+        console.log('Total content items:', extractedContent.length);
+        console.log('Extracted headings:', extractedHeadings);
+        
+        updateExtractionProgress(100, 'Extraction completed!');
+    }
+
+    // Convert image data to data URL
+    function imageToDataUrl(imageData) {
+        const { data, width, height } = imageData;
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+
+        // Add alpha channel if needed
+        let rgbaData;
+        if (data.length === width * height * 3) {
+            rgbaData = new Uint8ClampedArray(width * height * 4);
+            for (let i = 0, j = 0; i < data.length; i += 3, j += 4) {
+                rgbaData[j] = data[i];
+                rgbaData[j + 1] = data[i + 1];
+                rgbaData[j + 2] = data[i + 2];
+                rgbaData[j + 3] = 255;
+            }
+        } else {
+            rgbaData = new Uint8ClampedArray(data);
+        }
+
+        const imgData = new ImageData(rgbaData, width, height);
+        ctx.putImageData(imgData, 0, 0);
+        return canvas.toDataURL('image/png');
+    }
+
+    // Decode QR code from image
+    function decodeQR(imageData) {
+        try {
+            const { data, width, height } = imageData;
+            let rgbaData;
+            
+            if (data.length === width * height * 3) {
+                rgbaData = new Uint8ClampedArray(width * height * 4);
+                for (let i = 0, j = 0; i < data.length; i += 3, j += 4) {
+                    rgbaData[j] = data[i];
+                    rgbaData[j + 1] = data[i + 1];
+                    rgbaData[j + 2] = data[i + 2];
+                    rgbaData[j + 3] = 255;
+                }
+            } else {
+                rgbaData = new Uint8ClampedArray(data);
+            }
+
+            const result = jsQR(rgbaData, width, height);
+            return result ? result.data : null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    // Update stats display
+    function updateStats(pages) {
+        const textCount = extractedContent.filter(c => c.type === 'text').length;
+        const imageCount = extractedContent.filter(c => c.type === 'image').length;
+        
+        document.getElementById('stat-pages').textContent = pages;
+        document.getElementById('stat-text').textContent = textCount;
+        document.getElementById('stat-images').textContent = imageCount;
+        statsBar.style.display = 'flex';
+    }
+
+    // Find item by page and index
+    function findItemByPageAndIndex(pageNum, index, type) {
+        const pageItems = extractedContent.filter(item => 
+            item.pageNumber == pageNum && item.type === type
+        );
+        return pageItems[index];
+    }
+
+    // Edit functions for main page (unchanged)
+    function startEditInColumn(pageNum, index) {
+        const item = findItemByPageAndIndex(pageNum, index, 'text');
+        if (item) {
+            item.isEditing = true;
+            rerenderPage(pageNum);
+            // Also update modal if open
+            if (modal.classList.contains('active')) {
+                updateModalContent(pageNum);
+            }
+        }
+    }
+
+    function saveTextInColumn(pageNum, index) {
+        const item = findItemByPageAndIndex(pageNum, index, 'text');
+        if (item) {
+            const textarea = document.getElementById(`textarea-${pageNum}-${index}`);
+            if (textarea) {
+                item.content = textarea.value;
+                item.isEditing = false;
+                rerenderPage(pageNum);
+                // Also update modal if open
+                if (modal.classList.contains('active')) {
+                    updateModalContent(pageNum);
+                }
+            }
+        }
+    }
+
+    function cancelEditInColumn(pageNum, index) {
+        const item = findItemByPageAndIndex(pageNum, index, 'text');
+        if (item) {
+            item.isEditing = false;
+            rerenderPage(pageNum);
+            // Also update modal if open
+            if (modal.classList.contains('active')) {
+                updateModalContent(pageNum);
+            }
+        }
+    }
+
+    function downloadImageInColumn(pageNum, index) {
+        const item = findItemByPageAndIndex(pageNum, index, 'image');
+        if (item) {
+            const link = document.createElement('a');
+            link.href = item.content;
+            link.download = `image-page${item.pageNumber}-${Date.now()}.png`;
+            link.click();
+        }
+    }
+
+    // Rerender a specific page in main content
+    function rerenderPage(pageNum) {
+        const pageContainer = document.getElementById(`page-${pageNum}`);
+        if (!pageContainer) return;
+
+        // Get page data
+        const pageData = {
+            textBlocks: extractedContent.filter(item => 
+                item.pageNumber == pageNum && item.type === 'text'
+            ),
+            images: extractedContent.filter(item => 
+                item.pageNumber == pageNum && item.type === 'image'
+            )
+        };
+
+        // Update page HTML
+        pageContainer.innerHTML = `
+            <div class="page-header">
+                <div class="page-title">
+                    📄 Page ${pageNum}
+                    <span class="page-info">
+                        ${pageData.textBlocks.length} text block${pageData.textBlocks.length !== 1 ? 's' : ''} • 
+                        ${pageData.images.length} image${pageData.images.length !== 1 ? 's' : ''}
+                    </span>
+                </div>
+            </div>
+            <div class="two-column-layout">
+                <div class="text-column" id="text-col-${pageNum}"></div>
+                <div class="image-column" id="image-col-${pageNum}"></div>
+            </div>
+        `;
+
+        // Add text blocks
+        const textColumn = document.getElementById(`text-col-${pageNum}`);
+        pageData.textBlocks.forEach((item, index) => {
+            const textBlock = createTextBlockHTML(item, index, pageNum);
+            textColumn.insertAdjacentHTML('beforeend', textBlock);
+        });
+
+        // Add images
+        const imageColumn = document.getElementById(`image-col-${pageNum}`);
+        pageData.images.forEach((item, index) => {
+            const imageBlock = createImageBlockHTML(item, index, pageNum);
+            imageColumn.insertAdjacentHTML('beforeend', imageBlock);
+        });
+    }
+
+    // Create text block HTML for main page
+    function createTextBlockHTML(item, index, pageNum) {
+        const isEditing = item.isEditing;
+        
+        return `
+            <div class="text-block">
+                <div class="text-header">
+                    <div>
+                        <span class="block-badge badge-text">📝 Text</span>
+                    </div>
+                    <div class="block-actions">
+                        ${isEditing ? `
+                            <button class="btn btn-save" onclick="saveTextInColumn(${pageNum}, ${index})">💾 Save</button>
+                            <button class="btn btn-cancel" onclick="cancelEditInColumn(${pageNum}, ${index})">✖ Cancel</button>
+                        ` : `
+                            <button class="btn btn-edit" onclick="startEditInColumn(${pageNum}, ${index})">✏️ Edit</button>
+                        `}
+                    </div>
+                </div>
+                <div class="text-content">
+                    ${isEditing ? `
+                        <textarea class="text-edit" id="textarea-${pageNum}-${index}">${escapeHtml(item.content)}</textarea>
+                    ` : `
+                        <div class="text-display">${escapeHtml(item.content)}</div>
+                    `}
+                </div>
+            </div>
+        `;
+    }
+
+    // Create image block HTML for main page
+    function createImageBlockHTML(item, index, pageNum) {
+        return `
+            <div class="image-block">
+                <div class="image-header">
+                    <div>
+                        <span class="block-badge badge-image">🖼️ Image</span>
+                        <span class="image-info">${item.width}×${item.height}</span>
+                    </div>
+                    <div class="block-actions">
+                        <button class="btn btn-download" onclick="downloadImageInColumn(${pageNum}, ${index})">⬇️ Download</button>
+                    </div>
+                </div>
+                <div class="image-container">
+                    <img src="${item.content}" alt="Extracted image from page ${item.pageNumber}">
+                </div>
+                ${item.qrData ? `
+                    <div class="text-content">
+                        <div class="qr-result">
+                            <div class="qr-result-label">🔍 QR Code Detected:</div>
+                            <div class="qr-result-data">${escapeHtml(item.qrData)}</div>
+                        </div>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    }
+
+    // Render content with 2-column layout per page
+    function renderContent() {
+        if (extractedContent.length === 0) {
+            showEmptyState();
+            return;
+        }
+
+        contentContainer.innerHTML = '<div class="content-list" id="content-list"></div>';
+        const list = document.getElementById('content-list');
+
+        // Group content by page
+        const pages = {};
+        extractedContent.forEach(item => {
+            if (!pages[item.pageNumber]) {
+                pages[item.pageNumber] = {
+                    textBlocks: [],
+                    images: []
+                };
+            }
+            
+            if (item.type === 'text') {
+                pages[item.pageNumber].textBlocks.push(item);
+            } else if (item.type === 'image') {
+                pages[item.pageNumber].images.push(item);
+            }
+        });
+
+        // Create page containers
+        Object.keys(pages).sort((a, b) => a - b).forEach(pageNum => {
+            const pageData = pages[pageNum];
+            
+            const pageContainer = document.createElement('div');
+            pageContainer.className = 'page-container';
+            pageContainer.id = `page-${pageNum}`;
+            
+            // Page header
+            pageContainer.innerHTML = `
+                <div class="page-header">
+                    <div class="page-title">
+                        📄 Page ${pageNum}
+                        <span class="page-info">
+                            ${pageData.textBlocks.length} text block${pageData.textBlocks.length !== 1 ? 's' : ''} • 
+                            ${pageData.images.length} image${pageData.images.length !== 1 ? 's' : ''}
+                        </span>
+                    </div>
+                </div>
+                <div class="two-column-layout">
+                    <div class="text-column" id="text-col-${pageNum}"></div>
+                    <div class="image-column" id="image-col-${pageNum}"></div>
+                </div>
+            `;
+            
+            list.appendChild(pageContainer);
+            
+            // Add text blocks to left column
+            const textColumn = document.getElementById(`text-col-${pageNum}`);
+            pageData.textBlocks.forEach((item, index) => {
+                const textBlock = createTextBlockHTML(item, index, pageNum);
+                textColumn.insertAdjacentHTML('beforeend', textBlock);
+            });
+            
+            // Add images to right column
+            const imageColumn = document.getElementById(`image-col-${pageNum}`);
+            pageData.images.forEach((item, index) => {
+                const imageBlock = createImageBlockHTML(item, index, pageNum);
+                imageColumn.insertAdjacentHTML('beforeend', imageBlock);
+            });
+        });
+    }
+
+    // Helper functions
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function showEmptyState() {
+        contentContainer.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">📄</div>
+                <div>No content extracted. Upload a PDF to get started.</div>
+            </div>
+        `;
+    }
+</script>
+<script>
+function ExtractPPT(slidesData) {
+    const pptx = new PptxGenJS();
+
+    // Set custom slide size: 16 x 6 inches
+    pptx.defineLayout({ name: "Custom16x6", width: 16, height: 6 });
+    pptx.layout = "Custom16x6";
+
+    const today = new Date();
+    const dateStr = today.toLocaleDateString(); // e.g., "1/23/2026"
+
+    slidesData.forEach((slideItem, index) => {
+        const slide = pptx.addSlide();
+
+        // --- Top Heading Shape ---
+        if (slideItem.heading) {
+            slide.addText(slideItem.heading, {
+                x: 0.0, y: 0.0, w: 7.0, h: 0.7,
+                fontSize: 28,
+                bold: true,
+                color: "2c3e50",
+                valign: "middle",
+                align: "center",
+                fill: { color: "DDA0F7" }, // light purple
+                margin: 0.1,
+                borderRadius: 4
+            });
+        }
+
+        // --- Left Column Background Shape (DDA0F7, NO LINE) ---
+        slide.addShape(pptx.shapes.RECTANGLE, {  // plain rectangle
+            x: 0.8, y: 0.7, w: 6.2, h: 5.0,
+            fill: { color: "DDA0F7" }, // purple background
+            line: null                 // no border line
+        });
+
+        // --- Left Column Text ---
+        slide.addText(slideItem.text || "No text available", {
+            x: 0.2, y: 0.7, w: 6.5, h: 4.9,
+            fontSize: 22,
+            color: "363636",
+            valign: "top",
+            align: "justify",
+            margin: 0.1,
+            bold: true,
+            fill: { color: "FFFFFF" },
+            shape: pptx.shapes.ROUNDED_RECTANGLE
+        });
+
+        // --- Right Column Image ---
+        if (slideItem.image) {
+            slide.addImage({
+                x: 7, y: 0.0, w: 9, h: 6.0,
+                data: slideItem.image
+            });
+        }
+
+        // --- Bottom Footer Shape with Date & Slide Number ---
+        slide.addText(`Date: ${dateStr}   |   Slide: ${index + 1}`, {
+            x: 0.0, y: 5.6, w: 7.0, h: 0.4,
+            fontSize: 18,
+            bold: true,
+            color: "2c3e50",
+            valign: "middle",
+            align: "center",
+            fill: { color: "DDA0F7" }, // same light purple
+            margin: 0.1,
+            borderRadius: 4
+        });
+    });
+
+    pptx.writeFile("GeneratedSlides.pptx");
+}
+
+function downloadImageInModal(pageNum, index) {
+    const slidesData = [];
+    
+    // Only select elements inside the modal
+    const modal = document.getElementById("extracted-content-modal");
+    const textBlocks = modal.querySelectorAll(".text-block");
+    const imageBlocks = modal.querySelectorAll(".image-block");
+    
+    // The modal should have equal number of text and image blocks (one per page)
+    const totalSlides = Math.min(textBlocks.length, imageBlocks.length);
+    
+    for (let i = 0; i < totalSlides; i++) {
+        const textDiv = textBlocks[i];
+        const imageDiv = imageBlocks[i];
+        
+        let heading = "";
+        
+        // Find the div that contains the actual heading text (flex:1)
+        const headingDiv = textDiv?.querySelector("div[style*='flex: 1']") || null;
+        if (headingDiv) {
+            heading = headingDiv.innerText.trim(); // Only heading text, no icons
+        }
+        
+        // Get the 3 sentences text content
+        const textContent = textDiv?.querySelector(".text-content")?.innerText || "";
+        const imageSrc = imageDiv?.querySelector("img")?.src || null;
+        
+        // Only add slide if we have heading (which we should for each page)
+        if (heading) {
+            slidesData.push({
+                heading: heading,
+                text: textContent,
+                image: imageSrc
+            });
+        }
+    }
+
+    // Generate PPTX
+    if (slidesData.length > 0) {
+        ExtractPPT(slidesData);
+    } else {
+        alert("No slides to download!");
+    }
+}
+</script>
+<script>
+// Updated showIframe function to work with URL parameter from your buttons
+function showIframe(url) {
+    // Check if modal is open
+    const modal = document.getElementById('extracted-content-modal');
+    if (!modal || !modal.classList.contains('active')) {
+        alert('Please open the modal first by extracting content.');
+        return;
+    }
+    
+    // Get the current page from modal navigation
+    const modalPageInfo = document.getElementById('modal-page-info');
+    let currentPage = 1;
+    
+    if (modalPageInfo) {
+        const match = modalPageInfo.textContent.match(/Page (\d+) of/);
+        if (match) {
+            currentPage = parseInt(match[1]);
+        }
+    }
+    
+    // Update global variable
+    currentIframePage = currentPage;
+    
+    // Construct dynamic IDs based on current page
+    const iframeWrapperId = `iframe-wrapper-${currentPage}`;
+    const iframeId = `SlideIframe-${currentPage}`;
+    const imageId = `SlideImage-${currentPage}`;
+    
+    const iframeWrapper = document.getElementById(iframeWrapperId);
+    const iframe = document.getElementById(iframeId);
+    const image = document.getElementById(imageId);
+
+    if (iframeWrapper && iframe && image) {
+        // Hide the image
+        image.style.display = 'none';
+
+        // Show iframe wrapper and set URL
+        iframeWrapper.style.display = 'block';
+        iframe.src = url;
+        
+        console.log(`Showing iframe on page ${currentPage} with URL: ${url}`);
+    } else {
+        console.error('Elements not found for page:', currentPage);
+        alert('Iframe not available. Please navigate to a different slide and try again.');
+    }
+}
+
+// Updated closeIframe function to work with current page
+function closeIframe(pageNum = null) {
+    // Use provided pageNum or the currentIframePage
+    const pageToClose = pageNum || currentIframePage;
+    
+    // Construct dynamic IDs based on page number
+    const iframeWrapperId = `iframe-wrapper-${pageToClose}`;
+    const imageId = `SlideImage-${pageToClose}`;
+    
+    const iframeWrapper = document.getElementById(iframeWrapperId);
+    const image = document.getElementById(imageId);
+
+    if (iframeWrapper && image) {
+        // Hide iframe wrapper
+        iframeWrapper.style.display = 'none';
+
+        // Show the original image again
+        image.style.display = 'block';
+        
+        console.log(`Closing iframe for page ${pageToClose}`);
+    } else {
+        console.error('Elements not found for page:', pageToClose);
+    }
+}
+
+// Function to update iframe on modal page change (call this when modal page changes)
+function updateIframeOnPageChange() {
+    // Close iframe on current page if open
+    closeIframe();
+    
+    // Reset current page
+    const modalPageInfo = document.getElementById('modal-page-info');
+    if (modalPageInfo) {
+        const match = modalPageInfo.textContent.match(/Page (\d+) of/);
+        if (match) {
+            currentIframePage = parseInt(match[1]);
+        }
+    }
+}
+</script>
+<script>
+// Get the input box
+const weekInput = document.getElementById('WeekNoInput');
+
+// Attach click listener to all buttons with class btn-drive
+document.querySelectorAll('.btn-drive').forEach(btn => {
+    btn.addEventListener('click', function() {
+        // Set input value to button label (text content)
+        weekInput.value = this.textContent.trim();
+    });
+});
+</script>
+<script>
+window.addEventListener('DOMContentLoaded', (event) => {
+    // Auto-click button 1 on page load
+    const btn1 = document.querySelector('.btn-drive');
+    const btn2 = document.querySelector('#extract-week-1-btn');
+
+    function clickButton2WhenReady() {
+        // Check if button2 is enabled
+        if (!btn2.disabled) {
+            btn2.click();
+        } else {
+            // If still disabled, retry after 1 second
+            setTimeout(clickButton2WhenReady, 1000);
+        }
+    }
+
+    // Click button1 first
+    btn1.click();
+
+    // Start checking after 2 seconds (give some time for button1 loading)
+    setTimeout(clickButton2WhenReady, 2000);
+});
+</script>
+
+</body>
+</html>
