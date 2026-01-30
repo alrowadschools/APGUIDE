@@ -1025,7 +1025,7 @@ overflow: hidden;
             <div class="loader">
                 <div class="loader-circle"></div>
                 <div class="loader-circle"></div>
-                <div class="loader-inner">PDF</div>
+                <div class="loader-inner">PPT</div>
             </div>
             <div class="loader-text">Loading Content...</div>
         </div>
@@ -1143,6 +1143,21 @@ overflow: hidden;
 <button class="btn-drive" onclick="loadWeekPDF(1)"style="display:none;">WEEK 1</button>
   
  </div>
+
+        <!-- Upload and General Extract Button -->
+        <div class="action-buttons"style="display:none;">
+            <button class="btn-drive" onclick="loadPCPDF()">
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M4 6l8.5 12H15L6.5 6H4m2.5 0L13 12h5.5L12 2 6.5 6M18.5 6H22l-8.5 12h3L18.5 6z"/>
+                </svg>
+                UPLOAD📁
+            </button>
+            
+            <button class="btn-view-extracted" id="general-extract-btn" onclick="extractGeneralPDF()" disabled>
+                
+                EXTRACT
+            </button>
+        </div>
 
         <!-- PDF Viewer -->
         <div class="pdf-viewer-container" id="pdf-viewer-container"style="display:none;">
@@ -2096,30 +2111,6 @@ function createModalTextBlockHTML(item, index, pageNum) {
                 ">
                     <div style="display: flex; align-items: center; gap: 10px;">
                         <span class="block-badge badge-text">📝 Text</span>
-                        <!-- Action Buttons Container -->
-                        <div class="action-buttons" style="
-                            display: flex;
-                            gap: 10px;
-                            margin-left: 10px;
-                            align-items: center;
-                        ">
-                            <button class="btn-drive" onclick="loadPCPDF()" style="
-                                padding: 8px 16px;
-                                font-size: 14px;
-                            ">
-                                <svg width="16" height="16" viewBox="0 0 24 24" style="vertical-align: middle; margin-right: 5px;">
-                                    <path fill="currentColor" d="M4 6l8.5 12H15L6.5 6H4m2.5 0L13 12h5.5L12 2 6.5 6M18.5 6H22l-8.5 12h3L18.5 6z"/>
-                                </svg>
-                                UPLOAD📁
-                            </button>
-                            
-                            <button class="btn-view-extracted" id="general-extract-btn" onclick="extractGeneralPDF()" disabled style="
-                                padding: 8px 16px;
-                                font-size: 14px;
-                            ">
-                                EXTRACT
-                            </button>
-                        </div>
                     </div>
                     <div style="
                         font-family: 'Times New Roman', Times, serif;
