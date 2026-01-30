@@ -1145,7 +1145,7 @@ overflow: hidden;
  </div>
 
         <!-- Upload and General Extract Button -->
-        <div class="action-buttons">
+        <div class="action-buttons"style="display:none;">
             <button class="btn-drive" onclick="loadPCPDF()">
                 <svg width="20" height="20" viewBox="0 0 24 24">
                     <path fill="currentColor" d="M4 6l8.5 12H15L6.5 6H4m2.5 0L13 12h5.5L12 2 6.5 6M18.5 6H22l-8.5 12h3L18.5 6z"/>
@@ -3174,7 +3174,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     btn1.click();
 
     // Start checking after 2 seconds (give some time for button1 loading)
-    setTimeout(clickButton2WhenReady, 1000);
+    setTimeout(clickButton2WhenReady, 2000);
 });
 </script>
 
