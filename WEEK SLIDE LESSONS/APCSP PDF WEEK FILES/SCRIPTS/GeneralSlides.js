@@ -1134,39 +1134,30 @@ function createModalTextBlockHTML(item, index, pageNum) {
                             border-radius: 6px;
                             font-weight: bold;
                             font-size: 14px;
+                            display:none;
                         ">📝 Text</span>
                         <!-- UPLOAD and EXTRACT buttons moved here -->
                         <button class="btn-drive" onclick="loadPCPDF()" style="
-                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            background: #a855f7;
                             color: white;
-                            border: none;
-                            padding: 8px 16px;
+                            padding: 6px 12px;
                             border-radius: 6px;
-                            cursor: pointer;
                             font-weight: bold;
                             font-size: 14px;
-                            display: flex;
-                            align-items: center;
-                            gap: 5px;
-                            transition: all 0.3s ease;
-                            white-space: nowrap;
+                            cursor:pointer;
                         ">
-                            UPLOAD📁
+                            📁
                         </button>
                         <button class="btn-view-extracted" id="modal-general-extract-btn" onclick="extractGeneralPDF()" disabled style="
-                            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                            background: #a855f7;
                             color: white;
-                            border: none;
-                            padding: 8px 16px;
+                            padding: 6px 12px;
                             border-radius: 6px;
-                            cursor: not-allowed;
                             font-weight: bold;
                             font-size: 14px;
-                            transition: all 0.3s ease;
-                            opacity: 0.6;
-                            white-space: nowrap;
+                            cursor:pointer;
                         ">
-                            EXTRACT
+                            📝Extract
                         </button>
                     </div>
                     <div style="
@@ -1177,6 +1168,7 @@ function createModalTextBlockHTML(item, index, pageNum) {
                         text-align: center;
                         flex: 1;
                         min-width: 200px;
+                        cursor:pointer;
                     ">
                         ${escapeHtml(pageHeading)}
                     </div>
@@ -1933,6 +1925,7 @@ document.addEventListener('DOMContentLoaded', () => {
 setTimeout(() => {
     hideLoader();
 }, 2000);
+
 
 
 
