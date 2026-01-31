@@ -84,41 +84,14 @@ function initializeApp() {
     // Setup event listeners
     setupEventListeners();
     
-    // Auto-load the week for this page
-    const weekNumber = getCurrentWeekFromPage();
-    if (weekNumber) {
-        // Auto-load the week PDF for this page
-        setTimeout(() => {
-            loadWeekPDF(weekNumber);
-        }, 500);
-    }
+    // Just initialize, no auto-load
+    console.log('PDF Extractor initialized successfully');
 }
-
 // ============================================
 // DETECT CURRENT WEEK FROM PAGE
 // ============================================
 
-function getCurrentWeekFromPage() {
-    // Try to detect which week page this is from URL
-    const url = window.location.href.toLowerCase();
-    if (url.includes('week1') || url.includes('week-1')) return 1;
-    if (url.includes('week2') || url.includes('week-2')) return 2;
-    if (url.includes('week3') || url.includes('week-3')) return 3;
-    if (url.includes('week4') || url.includes('week-4')) return 4;
-    
-    // Or check for specific buttons on the page
-    const week1Btn = document.querySelector('[onclick*="loadWeekPDF(1)"]');
-    const week2Btn = document.querySelector('[onclick*="loadWeekPDF(2)"]');
-    const week3Btn = document.querySelector('[onclick*="loadWeekPDF(3)"]');
-    const week4Btn = document.querySelector('[onclick*="loadWeekPDF(4)"]');
-    
-    if (week1Btn) return 1;
-    if (week2Btn) return 2;
-    if (week3Btn) return 3;
-    if (week4Btn) return 4;
-    
-    return null;
-}
+
 
 // ============================================
 // EVENT LISTENERS SETUP
@@ -1820,21 +1793,7 @@ function showEmptyState() {
     }
 }
 
-function autoLoadWeek1() {
-    const btn1 = document.querySelector('.btn-drive');
-    const btn2 = document.querySelector('#extract-week-1-btn');
 
-    function clickButton2WhenReady() {
-        if (!btn2.disabled) {
-            btn2.click();
-        } else {
-            setTimeout(clickButton2WhenReady, 1000);
-        }
-    }
-
-    if (btn1) btn1.click();
-    setTimeout(clickButton2WhenReady, 2000);
-}
 
 // ============================================
 // INITIALIZE APP ON DOM LOAD
@@ -1853,3 +1812,4 @@ document.addEventListener('DOMContentLoaded', () => {
 setTimeout(() => {
     hideLoader();
 }, 2000);
+
