@@ -1112,12 +1112,7 @@ function createModalTextBlockHTML(item, index, pageNum) {
                     padding: 10px;
                     border-right:6px solid white;
                 ">
-                <div class="action-buttons">
-            <button class="btn-drive">UPLOAD📁</button>
-            <button class="btn-view-extracted" id="general-extract-btn" onclick="extractGeneralPDF()" disabled>EXTRACT</button>
-        </div>
-
-                    <div style="display: flex; align-items: center; gap: 10px;">
+                          <div style="display: flex; align-items: center; gap: 10px;">
                         <span class="block-badge badge-text">📝 Text</span>
                     </div>
                     <div style="
@@ -1858,4 +1853,5 @@ document.addEventListener('DOMContentLoaded', () => {
 setTimeout(() => {
     hideLoader();
 }, 2000);
+
 
