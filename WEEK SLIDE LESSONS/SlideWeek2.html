@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.10.0/dist/pptxgen.bundle.js"></script>
-<script src="https://unpkg.com/mammoth@1.4.8/mammoth.browser.min.js"></script>
-<link rel="stylesheet" href="APCSP PDF WEEK FILES/SCRIPTS/weekstyles.css">
-
-    <title>PPT EXTRACTOR</title>
-   
+    <script src="https://unpkg.com/mammoth@1.4.8/mammoth.browser.min.js"></script>
+    <link rel="stylesheet" href="APCSP PDF WEEK FILES/SCRIPTS/weekstyles.css">
+    <title>PPT EXTRACTOR - WEEK 2</title>
 </head>
 <body>
     <!-- Loader -->
@@ -30,130 +28,56 @@
     <!-- Modal for extracted content -->
     <div class="modal" id="extracted-content-modal">
         <div class="modal-content">
-                   <div class="modal-body">
+            <div class="modal-body">
                 <div class="modal-pages-container" id="modal-pages-container">
                     <!-- Pages will be inserted here -->
                 </div>
             </div>
-            <div class="modal-nav"
-     style="position: relative; display: flex; align-items: center;">
+            <div class="modal-nav" style="position: relative; display: flex; align-items: center;">
+                <!-- Left group -->
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <button class="modal-nav-btn" id="modal-prev-btn" onclick="prevModalPage()">◀️</button>
+                    <div class="modal-page-info" id="modal-page-info">SLIDE 1 of 1</div>
+                    
+                    <!-- Bottom Navigation Bar -->
+                    <div class="container-items" style="margin-bottom: 0px;height:0px;">
+                        <button class="item-color" style="--color: #facc15" aria-color="📚WK-2:Visual" onclick="showIframe('https://dannyvanpoucke.be/wp-content/uploads/2020/12/surface_Sinc2D_25_Ens.gif')"></button>
+                        <button class="item-color" style="--color: #e11d48" aria-color="📚WK-2:WHITE BOARD" onclick="showIframe('https://wbo.ophir.dev/boards/anonymous')"></button>
+                        <button class="item-color" style="--color: #facc15" aria-color="📚WK-2:Lesson Video" onclick="showIframe('https://www.youtube.com/embed/7_SX4pTr3gk')"></button>
+                        <button class="item-color" style="--color: #f472b6" aria-color="📚WK-2:JOIN MY QUIZZ" onclick="showIframe('https://wayground.com/join?gc=52065078&source=liveDashboard')"></button>
+                        <button class="item-color" style="--color: #84cc16" aria-color="📚WK-2:Practice Test" onclick="openTest()"></button>
+                    </div>
+                </div>
 
-    <!-- Left group -->
-    <div style="display: flex; align-items: center; gap: 10px;">
-        <button class="modal-nav-btn" id="modal-prev-btn" onclick="prevModalPage()">
-            ◀️
-        </button>
+                <!-- Close button (slightly left of center) -->
+                <button class="modal-close" onclick="closeModal()" style="position: absolute; left: 90%; transform: translateX(-65%);background:red;">✖️</button>
 
-        <div class="modal-page-info" id="modal-page-info">
-            SLIDE 1 of 1
-        </div>
-<!-- Bottom Navigation Bar -->
-   <div class="container-items" style="margin-bottom: 0px;height:0px;">
-
-<button
-        class="item-color"
-        style="--color: #facc15"
-
-        aria-color="📚WK-2:Visual"
-
-        onclick="showIframe('https://dannyvanpoucke.be/wp-content/uploads/2020/12/surface_Sinc2D_25_Ens.gif')"
-      ></button>
-<button
-    class="item-color"
-    style="--color: #e11d48"
-    aria-color="📚WK-2:WHITE BOARD"
-    onclick="showIframe('https://wbo.ophir.dev/boards/anonymous')"
-></button>
-
-<button
-        class="item-color"
-        style="--color: #facc15"
-
-        aria-color="📚WK-2:Lesson Video"
-
-        onclick="showIframe('https://www.youtube.com/embed/7_SX4pTr3gk')"
-      ></button>
-
-      <button
-        class="item-color"
-        style="--color: #f472b6"
-        aria-color="📚WK-2:JOIN MY QUIZZ"
-        onclick="showIframe('https://wayground.com/join?gc=52065078&source=liveDashboard')"
-      ></button>
-      
-      
-      <button
-        class="item-color"
-        style="--color: #84cc16"
-        aria-color="📚WK-2:Practice Test"
-        onclick="openTest()"
-      ></button>
-    <button
-        class="item-color"
-        style="--color: #84cc16"
-        aria-color="📚WK-2:Practice Test"
-        onclick="openTest()"
-      ></button>
-    <button
-        class="item-color"
-        style="--color: #84cc16"
-        aria-color="📚WK-2:Practice Test"
-        onclick="openTest()"
-      ></button>
-    </div>
-
-    </div>
-
-    <!-- Close button (slightly left of center) -->
-    <button class="modal-close"
-        onclick="closeModal()"
-        style="
-            position: absolute;
-            left: 90%;
-            transform: translateX(-65%);background:red;
-        ">
-        ✖️
-    </button>
-
-    <!-- Right button -->
-    <button class="modal-nav-btn" id="modal-next-btn" onclick="nextModalPage()">
-        ▶️
-    </button>
-
-</div>
-
+                <!-- Right button -->
+                <button class="modal-nav-btn" id="modal-next-btn" onclick="nextModalPage()">▶️</button>
+            </div>
         </div>
     </div>
 
     <div class="container">
-        <!-- Week Loading Buttons -->
+        <!-- Week Loading Button -->
         <div class="action-buttons">
-<!-- Input box -->
-<input type="text" id="WeekNoInput" placeholder="Enter Week No" style="margin-bottom: 8px; width: 100px; padding: 4px;display:none;">
-
-<!-- Week buttons -->
-<button class="btn-drive" onclick="loadWeekPDF(2)"style="display:none;">WEEK 2</button>
-  
- </div>
+            <!-- Input box (hidden) -->
+            <input type="text" id="WeekNoInput" placeholder="Enter Week No" style="margin-bottom: 8px; width: 100px; padding: 4px;display:none;">
+            
+            <!-- Week 2 Load Button -->
+            <button class="btn-drive" onclick="loadWeekPDF(2)">WEEK 2</button>
+        </div>
 
         <!-- Upload and General Extract Button -->
         <div class="action-buttons">
-            <button class="btn-drive" onclick="loadPCPDF()">
-                                UPLOAD📁
-            </button>
-            
-            <button class="btn-view-extracted" id="general-extract-btn" onclick="extractGeneralPDF()" disabled>
-                
-                EXTRACT
-            </button>
+            <button class="btn-drive" onclick="loadPCPDF()">UPLOAD📁</button>
+            <button class="btn-view-extracted" id="general-extract-btn" onclick="extractGeneralPDF()" disabled>EXTRACT</button>
         </div>
 
         <!-- PDF Viewer -->
-        <div class="pdf-viewer-container" id="pdf-viewer-container"style="display:none;">
-            <div class="viewer-header"style="display:none;">
-                <div class="viewer-title"style="display:none;">
-                    
-                    
+        <div class="pdf-viewer-container" id="pdf-viewer-container" style="display:none;">
+            <div class="viewer-header" style="display:none;">
+                <div class="viewer-title" style="display:none;">
                     <div class="extraction-status" id="extraction-status">
                         <div class="status-content">
                             <div class="status-spinner"></div>
@@ -192,53 +116,61 @@
                     </button>
                 </div>
             </div>
-            <div class="pdf-js-viewer-container"style="display:none;">
-                <div id="pdf-canvas-container"style="display:none;"></div>
+            <div class="pdf-js-viewer-container" style="display:none;">
+                <div id="pdf-canvas-container" style="display:none;"></div>
             </div>
         </div>
 
-        <!-- Existing drop zone -->
-        <div class="drop-zone" id="drop-zone"style="display:none;">
+        <!-- Drop zone -->
+        <div class="drop-zone" id="drop-zone" style="display:none;">
             <div class="drop-zone-icon">📁</div>
             <div class="drop-zone-text">Drop your PDF here or click to browse</div>
             <div class="drop-zone-hint">Supports PDF files up to 50MB</div>
             <input type="file" id="file-input" accept=".pdf,application/pdf">
         </div>
 
-        <!-- Week Extraction Buttons -->
-        <div class="action-buttons"style="display:none;">
-            <button class="btn-view-extracted" id="extract-week-1-btn" onclick="extractWeek(2)" disabled>
-                                Extract Week 2
-            </button>
-            
+        <!-- Week 2 Extract Button -->
+        <div class="action-buttons">
+            <button class="btn-view-extracted" id="extract-week-2-btn" onclick="extractWeek(2)" disabled>Extract Week 2</button>
         </div>
 
         <div class="stats-bar" id="stats-bar" style="display: none;">
-            <div class="stat-item"style="display: none;">
-                <div class="stat-value" id="stat-pages"style="display: none;">0</div>
-                <div class="stat-label"style="display: none;">Pages</div>
+            <div class="stat-item" style="display: none;">
+                <div class="stat-value" id="stat-pages" style="display: none;">0</div>
+                <div class="stat-label" style="display:none;">Pages</div>
             </div>
-            <div class="stat-item"style="display: none;">
-                <div class="stat-value" id="stat-text"style="display: none;">0</div>
-                <div class="stat-label"style="display: none;">Text Blocks</div>
+            <div class="stat-item" style="display: none;">
+                <div class="stat-value" id="stat-text" style="display: none;">0</div>
+                <div class="stat-label" style="display:none;">Text Blocks</div>
             </div>
-            <div class="stat-item"style="display: none;">
-                <div class="stat-value" id="stat-images"style="display: none;">0</div>
-                <div class="stat-label"style="display: none;">Images</div>
+            <div class="stat-item" style="display: none;">
+                <div class="stat-value" id="stat-images" style="display: none;">0</div>
+                <div class="stat-label" style="display:none;">Images</div>
             </div>
         </div>
 
-        <div id="content-container"style="display:none;"></div>
+        <div id="content-container" style="display:none;"></div>
     </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-<script src="https://unpkg.com/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <script src="https://unpkg.com/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 
-<!-- Single consolidated script file -->
-<script src="APCSP PDF WEEK FILES/SCRIPTS/GeneralSlides.js"></script>
+    <!-- Single consolidated script file -->
+    <script src="APCSP PDF WEEK FILES/SCRIPTS/GeneralSlides.js"></script>
+
+    <script>
+        // Auto-click WEEK 2 button when page loads
+        window.addEventListener('DOMContentLoaded', function() {
+            // Small delay to ensure all scripts are loaded
+            setTimeout(() => {
+                const week2Button = document.querySelector('[onclick="loadWeekPDF(2)"]');
+                if (week2Button) {
+                    week2Button.click();
+                }
+            }, 1000);
+        });
+    </script>
 
 </body>
-
 </html>
-
