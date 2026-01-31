@@ -171,6 +171,125 @@
             }, 1000);
         });
     </script>
+<script>
+function ExtractPPT(slidesData) {
+    const pptx = new PptxGenJS();
+
+    // Set custom slide size: 16 x 6 inches
+    pptx.defineLayout({ name: "Custom16x6", width: 16, height: 6 });
+    pptx.layout = "Custom16x6";
+
+    const today = new Date();
+    const dateStr = today.toLocaleDateString(); // e.g., "1/23/2026"
+
+    slidesData.forEach((slideItem, index) => {
+        const slide = pptx.addSlide();
+
+        // --- Top Heading Shape ---
+        if (slideItem.heading) {
+            slide.addText(slideItem.heading, {
+                x: 0.0, y: 0.0, w: 7.0, h: 0.7,
+                fontSize: 28,
+                bold: true,
+                color: "2c3e50",
+                valign: "middle",
+                align: "center",
+                fill: { color: "DDA0F7" }, // light purple
+                margin: 0.1,
+                borderRadius: 4
+            });
+        }
+
+        // --- Left Column Background Shape (DDA0F7, NO LINE) ---
+        slide.addShape(pptx.shapes.RECTANGLE, {  // plain rectangle
+            x: 0.8, y: 0.7, w: 6.2, h: 5.0,
+            fill: { color: "DDA0F7" }, // purple background
+            line: null                 // no border line
+        });
+
+        // --- Left Column Text ---
+        slide.addText(slideItem.text || "No text available", {
+            x: 0.2, y: 0.7, w: 6.5, h: 4.9,
+            fontSize: 22,
+            color: "363636",
+            valign: "top",
+            align: "justify",
+            margin: 0.1,
+            bold: true,
+            fill: { color: "FFFFFF" },
+            shape: pptx.shapes.ROUNDED_RECTANGLE
+        });
+
+        // --- Right Column Image ---
+        if (slideItem.image) {
+            slide.addImage({
+                x: 7, y: 0.0, w: 9, h: 6.0,
+                data: slideItem.image
+            });
+        }
+
+        // --- Bottom Footer Shape with Date & Slide Number ---
+        slide.addText(`Date: ${dateStr}   |   Slide: ${index + 1}`, {
+            x: 0.0, y: 5.6, w: 7.0, h: 0.4,
+            fontSize: 18,
+            bold: true,
+            color: "2c3e50",
+            valign: "middle",
+            align: "center",
+            fill: { color: "DDA0F7" }, // same light purple
+            margin: 0.1,
+            borderRadius: 4
+        });
+    });
+
+    pptx.writeFile("GeneratedSlides.pptx");
+}
+
+function downloadImageInModal(pageNum, index) {
+    const slidesData = [];
+    
+    // Only select elements inside the modal
+    const modal = document.getElementById("extracted-content-modal");
+    const textBlocks = modal.querySelectorAll(".text-block");
+    const imageBlocks = modal.querySelectorAll(".image-block");
+    
+    // The modal should have equal number of text and image blocks (one per page)
+    const totalSlides = Math.min(textBlocks.length, imageBlocks.length);
+    
+    for (let i = 0; i < totalSlides; i++) {
+        const textDiv = textBlocks[i];
+        const imageDiv = imageBlocks[i];
+        
+        let heading = "";
+        
+        // Find the div that contains the actual heading text (flex:1)
+        const headingDiv = textDiv?.querySelector("div[style*='flex: 1']") || null;
+        if (headingDiv) {
+            heading = headingDiv.innerText.trim(); // Only heading text, no icons
+        }
+        
+        // Get the 3 sentences text content
+        const textContent = textDiv?.querySelector(".text-content")?.innerText || "";
+        const imageSrc = imageDiv?.querySelector("img")?.src || null;
+        
+        // Only add slide if we have heading (which we should for each page)
+        if (heading) {
+            slidesData.push({
+                heading: heading,
+                text: textContent,
+                image: imageSrc
+            });
+        }
+    }
+
+    // Generate PPTX
+    if (slidesData.length > 0) {
+        ExtractPPT(slidesData);
+    } else {
+        alert("No slides to download!");
+    }
+}
+</script>
 
 </body>
 </html>
