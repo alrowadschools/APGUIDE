@@ -160,39 +160,87 @@
     <script src="APCSP PDF WEEK FILES/SCRIPTS/GeneralSlides.js"></script>
 
     <script>
-        // Track if auto-extraction has been triggered
+        // Track auto-load state
+        let isAutoLoading = false;
         let autoExtractTriggered = false;
+        
+        // Function to simulate click with retry
+        function simulateClickWithRetry(selector, maxRetries = 3, delay = 2000) {
+            let retries = 0;
+            
+            function tryClick() {
+                const element = document.querySelector(selector);
+                console.log(`Looking for element: ${selector}, found:`, element);
+                
+                if (element) {
+                    console.log(`Clicking element: ${selector}`);
+                    element.click();
+                    return true;
+                } else if (retries < maxRetries) {
+                    retries++;
+                    console.log(`Element ${selector} not found, retry ${retries}/${maxRetries} in ${delay}ms`);
+                    setTimeout(tryClick, delay);
+                    return false;
+                } else {
+                    console.error(`Element ${selector} not found after ${maxRetries} retries`);
+                    return false;
+                }
+            }
+            
+            return tryClick();
+        }
         
         // Function to check if extraction is complete and trigger auto-extract
         function checkAndAutoExtract() {
             const extractBtn = document.getElementById('extract-week-1-btn');
+            console.log('Checking extract button status:', extractBtn ? extractBtn.disabled : 'No button');
             
-            // Check if extract button is enabled (means extraction is complete)
             if (extractBtn && !extractBtn.disabled && !autoExtractTriggered) {
                 autoExtractTriggered = true;
                 console.log('Auto-extracting Week 1 content...');
                 extractBtn.click();
+                return true;
             } else if (extractBtn && extractBtn.disabled) {
                 // If still disabled, check again in 1 second
                 setTimeout(checkAndAutoExtract, 1000);
+                return false;
             }
+            return false;
         }
         
-        // Auto-click WEEK 1 button and then auto-extract when page loads
+        // Auto-load WEEK 1 when page loads
         window.addEventListener('DOMContentLoaded', function() {
-            // Small delay to ensure all scripts are loaded
+            console.log('DOM loaded, starting auto-load process...');
+            
+            // First, wait for the JavaScript to be fully loaded
             setTimeout(() => {
-                const week1Button = document.querySelector('[onclick="loadWeekPDF(1)"]');
-                if (week1Button) {
-                    console.log('Auto-loading Week 1 PDF...');
-                    week1Button.click();
+                console.log('Starting auto-load sequence...');
+                isAutoLoading = true;
+                
+                // Step 1: Click WEEK 1 button
+                const weekLoaded = simulateClickWithRetry('[onclick="loadWeekPDF(1)"]');
+                
+                if (weekLoaded) {
+                    console.log('Week 1 load triggered, waiting for extraction...');
                     
-                    // Start checking for extraction completion after 3 seconds
+                    // Step 2: Wait a bit, then start checking for extraction completion
                     setTimeout(() => {
+                        console.log('Starting auto-extract check...');
                         checkAndAutoExtract();
                     }, 3000);
                 }
-            }, 1000);
+            }, 1500); // Increased delay to ensure scripts are loaded
+        });
+        
+        // Alternative: Also trigger on window load
+        window.addEventListener('load', function() {
+            console.log('Window fully loaded');
+            // If auto-load hasn't started yet, start it
+            if (!isAutoLoading) {
+                setTimeout(() => {
+                    simulateClickWithRetry('[onclick="loadWeekPDF(1)"]');
+                }, 1000);
+            }
         });
     </script>
 <script>
@@ -317,4 +365,5 @@ function downloadImageInModal(pageNum, index) {
 
 </body>
 </html>
+
 
