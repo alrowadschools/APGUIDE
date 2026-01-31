@@ -1137,28 +1137,46 @@ function createModalTextBlockHTML(item, index, pageNum) {
                             display:none;
                         ">📝 Text</span>
                         <!-- UPLOAD and EXTRACT buttons moved here -->
-                        <button class="btn-drive" onclick="loadPCPDF()" style="
-                            background: #a855f7;
-                            color: white;
-                            padding: 6px 6px;
-                            border-radius: 6px;
-                            font-weight: bold;
-                            font-size: 12px;
-                            cursor:pointer;
-                        ">
-                            📁
-                        </button>
-                        <button class="btn-view-extracted" id="modal-general-extract-btn" onclick="extractGeneralPDF()" disabled style="
-                            background: #a855f7;
-                            color: white;
-                            padding: 6px 8px;
-                            border-radius: 6px;
-                            font-weight: bold;
-                            font-size: 12px;
-                            cursor:pointer;
-                        ">
-                            📝Extract
-                        </button>
+                        <button class="btn-drive" onclick="loadPCPDF()" title="Upload PDF" style="
+    background: white;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;       /* Makes it a perfect circle */
+    font-weight: bold;
+    font-size: 22px;          /* Adjust emoji size */
+    cursor: pointer;
+    border: 1px solid rgba(168, 85, 247, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;               /* Remove extra padding for perfect circle */
+">
+    📁
+</button>
+
+                        <button class="btn-view-extracted" 
+        id="modal-general-extract-btn" 
+        onclick="extractGeneralPDF()" 
+        disabled 
+        title="Extract PDF" 
+        style="
+            background: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;         /* Makes it a perfect circle */
+            font-weight: bold;
+            cursor: pointer;
+            border: 1px solid rgba(168, 85, 247, 0.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;                 /* Remove extra padding for perfect circle */
+            font-size: 22px;
+        ">
+    <span style="color: orange; font-size: 22px; line-height: 1;">📚</span>
+</button>
+
                     </div>
                     <div style="
                         font-family: 'Times New Roman', Times, serif;
@@ -1179,21 +1197,24 @@ function createModalTextBlockHTML(item, index, pageNum) {
                         ` : `
 <button class="btn btn-edit"
         onclick="openNotesModal(${pageNum})"
+        title="Notes" 
         style="
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            border: none;
-            padding: 8px 8px;
-            border-radius: 6px;
+            background: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             cursor: pointer;
-            font-weight: bold;
-            font-size:12px;
+            border: 1px solid rgba(168, 85, 247, 0.18);
             display: flex;
             align-items: center;
-            gap: 5px;
+            justify-content: center;
+            padding: 0;
+            font-size: 22px;     /* 🔼 Increase emoji size */
+            line-height: 1;      /* Perfect vertical centering */
         ">
-    ✏️ Notes Panel
+    🧮
 </button>
+
                         `}
                     </div>
                 </div>
@@ -1260,21 +1281,25 @@ function createModalImageBlockHTML(item, index, pageNum) {
             ${escapeHtml(pageHeading)}
         </div>
         <div class="block-actions">
-            <button class="btn btn-download" onclick="downloadImageInModal(${pageNum}, ${index})" style="
-                background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-                color: white;
-                border: none;
-                padding: 8px 16px;
-                border-radius: 6px;
-                cursor: pointer;
-                font-weight: bold;
-                font-size: 14px;
-                display: flex;
-                align-items: center;
-                gap: 5px;
-            ">
-                ⬇️ DOWNLOAD .PPTX
-            </button>
+            <button class="btn btn-download"
+        onclick="downloadImageInModal(${pageNum}, ${index})"
+        style="
+            background: rgba(168, 85, 247, 0.18);
+            color: grey;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;  /* ✅ center horizontally */
+            gap: 6px;
+        ">
+    ⬇️ Download .pptx 💾
+</button>
+
         </div>
     </div>
     
@@ -1925,6 +1950,7 @@ document.addEventListener('DOMContentLoaded', () => {
 setTimeout(() => {
     hideLoader();
 }, 2000);
+
 
 
 
