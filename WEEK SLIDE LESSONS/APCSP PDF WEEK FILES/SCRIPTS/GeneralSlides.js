@@ -5,13 +5,6 @@
 // ============================================
 
 // State
-// Main PDF Extractor Application Script
-
-// ============================================
-// GLOBAL STATE AND CONFIGURATION
-// ============================================
-
-// State
 let extractedContent = [];
 let extractedHeadings = {};
 let isLoading = false;
@@ -47,7 +40,7 @@ const weekFiles = {
 let dropZone, fileInput, statsBar, contentContainer, pdfViewerContainer;
 let currentPageInput, totalPagesSpan, zoomLevelSpan, extractionStatus;
 let statusText, statusBar, modal, modalPagesContainerElem;
-let modalPrevBtn, modalNextBtn, modalPageInfo, generalExtractBtn;
+let modalPrevBtn, modalNextBtn, modalPageInfo;
 
 // ============================================
 // INITIALIZATION FUNCTION
@@ -76,7 +69,6 @@ function initializeApp() {
     modalPrevBtn = document.getElementById('modal-prev-btn');
     modalNextBtn = document.getElementById('modal-next-btn');
     modalPageInfo = document.getElementById('modal-page-info');
-    generalExtractBtn = document.getElementById('general-extract-btn');
     
     // Initialize canvas container
     canvasContainer = document.getElementById('pdf-canvas-container');
@@ -143,15 +135,7 @@ function setupEventListeners() {
             dropZone.classList.remove('dragover');
             const file = e.dataTransfer.files[0];
             if (file && file.type === 'application/pdf') {
-                pdfFileName = file.name.replace('.pdf', '');
-                currentWeek = null;
-                isCustomFileUploaded = true;
-                
-                // Disable week extract buttons when custom file is uploaded
-                disableWeekExtractButtons();
-                if (generalExtractBtn) generalExtractBtn.disabled = false;
-                
-                loadAndProcessFile(file);
+                handleFileUpload(file);
             } else {
                 alert('Please drop a valid PDF file');
             }
@@ -162,15 +146,7 @@ function setupEventListeners() {
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
-                pdfFileName = file.name.replace('.pdf', '');
-                currentWeek = null;
-                isCustomFileUploaded = true;
-                
-                // Disable week extract buttons when custom file is uploaded
-                disableWeekExtractButtons();
-                if (generalExtractBtn) generalExtractBtn.disabled = false;
-                
-                loadAndProcessFile(file);
+                handleFileUpload(file);
             }
         });
     }
@@ -197,6 +173,38 @@ function setupEventListeners() {
             });
         });
     }
+}
+
+// ============================================
+// FILE UPLOAD HANDLER
+// ============================================
+
+function handleFileUpload(file) {
+    pdfFileName = file.name.replace('.pdf', '');
+    currentWeek = null;
+    isCustomFileUploaded = true;
+    
+    // Update modal extract button
+    updateModalExtractButton();
+    
+    // Disable week extract buttons when custom file is uploaded
+    disableWeekExtractButtons();
+    
+    loadAndProcessFile(file);
+}
+
+// ============================================
+// MODAL BUTTON MANAGEMENT
+// ============================================
+
+function updateModalExtractButton() {
+    // Update modal extract button on all pages
+    const modalExtractBtns = document.querySelectorAll('#modal-general-extract-btn');
+    modalExtractBtns.forEach(btn => {
+        btn.disabled = !isCustomFileUploaded;
+        btn.style.opacity = isCustomFileUploaded ? '1' : '0.6';
+        btn.style.cursor = isCustomFileUploaded ? 'pointer' : 'not-allowed';
+    });
 }
 
 // ============================================
@@ -235,6 +243,9 @@ async function loadWeekPDF(weekNumber) {
     currentWeek = weekNumber;
     isCustomFileUploaded = false;
     
+    // Disable modal extract button when loading week PDF
+    updateModalExtractButton();
+    
     const filePath = weekFiles[weekNumber];
     
     if (!filePath) {
@@ -252,7 +263,6 @@ async function loadWeekPDF(weekNumber) {
         
         // Disable all week extract buttons initially
         disableWeekExtractButtons();
-        if (generalExtractBtn) generalExtractBtn.disabled = true;
         
         // Enable the corresponding extract button for this week
         const extractBtn = document.getElementById(`extract-week-${weekNumber}-btn`);
@@ -380,9 +390,6 @@ function disableWeekExtractButtons() {
     extractButtons.forEach(btn => {
         btn.disabled = true;
     });
-    
-    // Also disable general extract button
-    if (generalExtractBtn) generalExtractBtn.disabled = true;
 }
 
 // ============================================
@@ -394,6 +401,10 @@ async function loadAndProcessFile(file) {
         const arrayBuffer = await file.arrayBuffer();
         currentWeek = null;
         isCustomFileUploaded = true;
+        
+        // Update modal button
+        updateModalExtractButton();
+        
         await loadAndProcessPDF(arrayBuffer, file.name);
     } catch (error) {
         console.error('Error loading file:', error);
@@ -403,7 +414,10 @@ async function loadAndProcessFile(file) {
 }
 
 function loadPCPDF() {
-    if (fileInput) fileInput.click();
+    if (fileInput) {
+        // Trigger file input click
+        fileInput.click();
+    }
 }
 
 async function loadAndProcessPDF(arrayBuffer, pdfName = 'PDF') {
@@ -1099,21 +1113,61 @@ function createModalTextBlockHTML(item, index, pageNum) {
         
         return `
             <div class="text-block">
-                <!-- TOP ROW: Text99 + Page Heading + Edit Button -->
+                <!-- TOP ROW: Text Badge + UPLOAD/EXTRACT Buttons + Page Heading + Edit Button -->
                 <div style="
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
                     margin-bottom:0px;
-                    gap:0px;
+                    gap:10px;
                     flex-wrap: wrap;
                     background: rgba(168, 85, 247, 0.18);
                     border-radius: 0px;
                     padding: 10px;
                     border-right:6px solid white;
                 ">
-                          <div style="display: flex; align-items: center; gap: 10px;">
-                        <span class="block-badge badge-text">📝 Text</span>
+                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                        <span class="block-badge badge-text" style="
+                            background: #a855f7;
+                            color: white;
+                            padding: 6px 12px;
+                            border-radius: 6px;
+                            font-weight: bold;
+                            font-size: 14px;
+                        ">📝 Text</span>
+                        <!-- UPLOAD and EXTRACT buttons moved here -->
+                        <button class="btn-drive" onclick="loadPCPDF()" style="
+                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            color: white;
+                            border: none;
+                            padding: 8px 16px;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-weight: bold;
+                            font-size: 14px;
+                            display: flex;
+                            align-items: center;
+                            gap: 5px;
+                            transition: all 0.3s ease;
+                            white-space: nowrap;
+                        ">
+                            UPLOAD📁
+                        </button>
+                        <button class="btn-view-extracted" id="modal-general-extract-btn" onclick="extractGeneralPDF()" disabled style="
+                            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                            color: white;
+                            border: none;
+                            padding: 8px 16px;
+                            border-radius: 6px;
+                            cursor: not-allowed;
+                            font-weight: bold;
+                            font-size: 14px;
+                            transition: all 0.3s ease;
+                            opacity: 0.6;
+                            white-space: nowrap;
+                        ">
+                            EXTRACT
+                        </button>
                     </div>
                     <div style="
                         font-family: 'Times New Roman', Times, serif;
@@ -1122,16 +1176,30 @@ function createModalTextBlockHTML(item, index, pageNum) {
                         color: #2c3e50;
                         text-align: center;
                         flex: 1;
+                        min-width: 200px;
                     ">
                         ${escapeHtml(pageHeading)}
                     </div>
-                    <div class="block-actions">
+                    <div class="block-actions" style="white-space: nowrap;">
                         ${isEditing ? `
                             <button class="btn btn-save" onclick="saveTextInModal(${pageNum}, ${index})">💾 Save</button>
                             <button class="btn btn-cancel" onclick="cancelEditInModal(${pageNum}, ${index})">✖ Cancel</button>
                         ` : `
 <button class="btn btn-edit"
-        onclick="openNotesModal(${pageNum})">
+        onclick="openNotesModal(${pageNum})"
+        style="
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        ">
     ✏️ NOTES PANEL
 </button>
                         `}
@@ -1200,7 +1268,19 @@ function createModalImageBlockHTML(item, index, pageNum) {
             ${escapeHtml(pageHeading)}
         </div>
         <div class="block-actions">
-            <button class="btn btn-download" onclick="downloadImageInModal(${pageNum}, ${index})">
+            <button class="btn btn-download" onclick="downloadImageInModal(${pageNum}, ${index})" style="
+                background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-weight: bold;
+                font-size: 14px;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            ">
                 ⬇️ DOWNLOAD .PPTX
             </button>
         </div>
@@ -1853,5 +1933,6 @@ document.addEventListener('DOMContentLoaded', () => {
 setTimeout(() => {
     hideLoader();
 }, 2000);
+
 
 
