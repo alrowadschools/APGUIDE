@@ -50,7 +50,7 @@
                 </div>
 
                 <!-- Close button (slightly left of center) -->
-                <button class="modal-close" onclick="closeModal()" style="position: absolute; left: 90%; transform: translateX(-65%);background:red;">✖️</button>
+                <button class="modal-close" onclick="closeModal()" style="position: absolute; left: 90%;display:none; transform: translateX(-65%);background:red;">✖️</button>
 
                 <!-- Right button -->
                 <button class="modal-nav-btn" id="modal-next-btn" onclick="nextModalPage()">▶️</button>
@@ -65,7 +65,7 @@
             <input type="text" id="WeekNoInput" placeholder="Enter Week No" style="margin-bottom: 8px; width: 100px; padding: 4px;display:none;">
             
             <!-- Week 1 Load Button -->
-            <button class="btn-drive" onclick="loadWeekPDF(1)">WEEK 1</button>
+            <button class="btn-drive" onclick="loadWeekPDF(1)"style="display:none;">WEEK 1</button>
         </div>
 
         <!-- Upload and General Extract Button -->
@@ -128,7 +128,7 @@
 
         <!-- Week 1 Extract Button -->
         <div class="action-buttons">
-            <button class="btn-view-extracted" id="extract-week-1-btn" onclick="extractWeek(1)" disabled>Extract Week 1</button>
+            <button class="btn-view-extracted"style="display:none;" id="extract-week-1-btn" onclick="extractWeek(1)" disabled>Extract Week 1</button>
         </div>
 
         <div class="stats-bar" id="stats-bar" style="display: none;">
@@ -314,6 +314,7 @@ function downloadImageInModal(pageNum, index) {
 
 </body>
 </html>
+
 
 
 
