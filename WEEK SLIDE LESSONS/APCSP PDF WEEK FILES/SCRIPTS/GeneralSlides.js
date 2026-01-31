@@ -1140,10 +1140,10 @@ function createModalTextBlockHTML(item, index, pageNum) {
                         <button class="btn-drive" onclick="loadPCPDF()" style="
                             background: #a855f7;
                             color: white;
-                            padding: 6px 12px;
+                            padding: 6px 6px;
                             border-radius: 6px;
                             font-weight: bold;
-                            font-size: 14px;
+                            font-size: 12px;
                             cursor:pointer;
                         ">
                             📁
@@ -1151,10 +1151,10 @@ function createModalTextBlockHTML(item, index, pageNum) {
                         <button class="btn-view-extracted" id="modal-general-extract-btn" onclick="extractGeneralPDF()" disabled style="
                             background: #a855f7;
                             color: white;
-                            padding: 6px 12px;
+                            padding: 6px 8px;
                             border-radius: 6px;
                             font-weight: bold;
-                            font-size: 14px;
+                            font-size: 12px;
                             cursor:pointer;
                         ">
                             📝Extract
@@ -1183,16 +1183,16 @@ function createModalTextBlockHTML(item, index, pageNum) {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
             border: none;
-            padding: 8px 16px;
+            padding: 8px 8px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 14px;
+            font-size:12px;
             display: flex;
             align-items: center;
             gap: 5px;
         ">
-    ✏️ NOTES PANEL
+    ✏️ Notes Panel
 </button>
                         `}
                     </div>
@@ -1925,6 +1925,7 @@ document.addEventListener('DOMContentLoaded', () => {
 setTimeout(() => {
     hideLoader();
 }, 2000);
+
 
 
 
