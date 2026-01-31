@@ -5,6 +5,13 @@
 // ============================================
 
 // State
+// Main PDF Extractor Application Script
+
+// ============================================
+// GLOBAL STATE AND CONFIGURATION
+// ============================================
+
+// State
 let extractedContent = [];
 let extractedHeadings = {};
 let isLoading = false;
@@ -77,8 +84,40 @@ function initializeApp() {
     // Setup event listeners
     setupEventListeners();
     
-    // Auto-click button 1 on page load
-    autoLoadWeek1();
+    // Auto-load the week for this page
+    const weekNumber = getCurrentWeekFromPage();
+    if (weekNumber) {
+        // Auto-load the week PDF for this page
+        setTimeout(() => {
+            loadWeekPDF(weekNumber);
+        }, 500);
+    }
+}
+
+// ============================================
+// DETECT CURRENT WEEK FROM PAGE
+// ============================================
+
+function getCurrentWeekFromPage() {
+    // Try to detect which week page this is from URL
+    const url = window.location.href.toLowerCase();
+    if (url.includes('week1') || url.includes('week-1')) return 1;
+    if (url.includes('week2') || url.includes('week-2')) return 2;
+    if (url.includes('week3') || url.includes('week-3')) return 3;
+    if (url.includes('week4') || url.includes('week-4')) return 4;
+    
+    // Or check for specific buttons on the page
+    const week1Btn = document.querySelector('[onclick*="loadWeekPDF(1)"]');
+    const week2Btn = document.querySelector('[onclick*="loadWeekPDF(2)"]');
+    const week3Btn = document.querySelector('[onclick*="loadWeekPDF(3)"]');
+    const week4Btn = document.querySelector('[onclick*="loadWeekPDF(4)"]');
+    
+    if (week1Btn) return 1;
+    if (week2Btn) return 2;
+    if (week3Btn) return 3;
+    if (week4Btn) return 4;
+    
+    return null;
 }
 
 // ============================================
@@ -107,6 +146,11 @@ function setupEventListeners() {
                 pdfFileName = file.name.replace('.pdf', '');
                 currentWeek = null;
                 isCustomFileUploaded = true;
+                
+                // Disable week extract buttons when custom file is uploaded
+                disableWeekExtractButtons();
+                if (generalExtractBtn) generalExtractBtn.disabled = false;
+                
                 loadAndProcessFile(file);
             } else {
                 alert('Please drop a valid PDF file');
@@ -121,6 +165,11 @@ function setupEventListeners() {
                 pdfFileName = file.name.replace('.pdf', '');
                 currentWeek = null;
                 isCustomFileUploaded = true;
+                
+                // Disable week extract buttons when custom file is uploaded
+                disableWeekExtractButtons();
+                if (generalExtractBtn) generalExtractBtn.disabled = false;
+                
                 loadAndProcessFile(file);
             }
         });
@@ -201,11 +250,11 @@ async function loadWeekPDF(weekNumber) {
         contentContainer.innerHTML = '';
         if (statsBar) statsBar.style.display = 'none';
         
-        // Disable all extract buttons initially
-        disableAllExtractButtons();
+        // Disable all week extract buttons initially
+        disableWeekExtractButtons();
         if (generalExtractBtn) generalExtractBtn.disabled = true;
         
-        // Enable the corresponding extract button
+        // Enable the corresponding extract button for this week
         const extractBtn = document.getElementById(`extract-week-${weekNumber}-btn`);
         if (extractBtn) {
             extractBtn.disabled = false;
@@ -299,7 +348,7 @@ async function loadWeekPDF(weekNumber) {
 
 function extractWeek(weekNumber) {
     if (currentWeek !== weekNumber) {
-        alert(`Please load Week ${weekNumber} PDF first before extracting.`);
+        alert(`Please load Week ${weekNumber} PDF first by clicking the "WEEK ${weekNumber}" button.`);
         return;
     }
     
@@ -325,13 +374,14 @@ function extractGeneralPDF() {
     openModal();
 }
 
-function disableAllExtractButtons() {
-    for (let i = 1; i <= 3; i++) {
-        const btn = document.getElementById(`extract-week-${i}-btn`);
-        if (btn) {
-            btn.disabled = true;
-        }
-    }
+function disableWeekExtractButtons() {
+    // Disable all week extract buttons on the page
+    const extractButtons = document.querySelectorAll('[id^="extract-week-"]');
+    extractButtons.forEach(btn => {
+        btn.disabled = true;
+    });
+    
+    // Also disable general extract button
     if (generalExtractBtn) generalExtractBtn.disabled = true;
 }
 
@@ -368,20 +418,6 @@ async function loadAndProcessPDF(arrayBuffer, pdfName = 'PDF') {
         clearCanvases();
         if (contentContainer) contentContainer.innerHTML = '';
         if (statsBar) statsBar.style.display = 'none';
-        
-        // Disable all extract buttons initially
-        disableAllExtractButtons();
-        
-        // Enable appropriate extract button
-        if (currentWeek) {
-            const extractBtn = document.getElementById(`extract-week-${currentWeek}-btn`);
-            if (extractBtn) {
-                extractBtn.disabled = false;
-            }
-            if (generalExtractBtn) generalExtractBtn.disabled = true;
-        } else if (isCustomFileUploaded) {
-            if (generalExtractBtn) generalExtractBtn.disabled = false;
-        }
         
         showExtractionStatus('Loading PDF...');
         
@@ -1453,6 +1489,131 @@ function updateIframeOnPageChange() {
     }
 }
 
+// ============================================
+// HELPER FUNCTIONS
+// ============================================
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function updateStats(pages) {
+    if (statsBar) {
+        statsBar.innerHTML = `
+            <div class="stat-item">
+                <span class="stat-label">📄 Pages:</span>
+                <span class="stat-value">${pages}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">📝 Text Blocks:</span>
+                <span class="stat-value">${extractedContent.filter(item => item.type === 'text').length}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">🖼️ Images:</span>
+                <span class="stat-value">${extractedContent.filter(item => item.type === 'image').length}</span>
+            </div>
+        `;
+        statsBar.style.display = 'flex';
+    }
+}
+
+function renderContent() {
+    if (!contentContainer) return;
+    
+    contentContainer.innerHTML = '';
+    
+    if (extractedContent.length === 0) {
+        contentContainer.innerHTML = '<div class="empty-state">No content extracted yet</div>';
+        return;
+    }
+    
+    const contentByPage = {};
+    extractedContent.forEach(item => {
+        if (!contentByPage[item.pageNumber]) {
+            contentByPage[item.pageNumber] = [];
+        }
+        contentByPage[item.pageNumber].push(item);
+    });
+    
+    Object.keys(contentByPage).sort((a, b) => a - b).forEach(pageNum => {
+        const pageDiv = document.createElement('div');
+        pageDiv.className = 'page-section';
+        
+        const heading = extractedHeadings[pageNum] || `Page ${pageNum}`;
+        pageDiv.innerHTML = `
+            <div class="page-header">
+                <h3>${escapeHtml(heading)}</h3>
+                <span class="page-number">Page ${pageNum}</span>
+            </div>
+        `;
+        
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'page-content';
+        
+        contentByPage[pageNum].forEach(item => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = `content-item ${item.type}-item`;
+            
+            if (item.type === 'text') {
+                itemDiv.innerHTML = `
+                    <div class="item-header">
+                        <span class="item-type">📝 Text</span>
+                        <span class="item-actions">
+                            <button onclick="editText('${item.id}')">✏️ Edit</button>
+                            <button onclick="copyText('${item.id}')">📋 Copy</button>
+                        </span>
+                    </div>
+                    <div class="item-content">${escapeHtml(item.content).replace(/\n/g, '<br>')}</div>
+                `;
+            } else if (item.type === 'image') {
+                itemDiv.innerHTML = `
+                    <div class="item-header">
+                        <span class="item-type">🖼️ Image</span>
+                        <span class="item-actions">
+                            <button onclick="downloadImage('${item.id}')">⬇️ Download</button>
+                            ${item.qrData ? `<button onclick="copyQR('${item.id}')">📋 Copy QR</button>` : ''}
+                        </span>
+                    </div>
+                    <div class="item-content">
+                        <img src="${item.content}" alt="Extracted image" style="max-width: 100%; border-radius: 8px;">
+                        ${item.qrData ? `
+                            <div class="qr-info">
+                                <strong>QR Code Detected:</strong>
+                                <div class="qr-data">${escapeHtml(item.qrData)}</div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+            
+            contentDiv.appendChild(itemDiv);
+        });
+        
+        pageDiv.appendChild(contentDiv);
+        contentContainer.appendChild(pageDiv);
+    });
+}
+
+function showEmptyState() {
+    if (contentContainer) {
+        contentContainer.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">📁</div>
+                <h3>No PDF Loaded</h3>
+                <p>Upload a PDF file or select a week to get started</p>
+            </div>
+        `;
+    }
+}
+
+// Initialize the app when DOM is loaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+    initializeApp();
+}
 // ============================================
 // PPTX GENERATION FUNCTIONS
 // ============================================
