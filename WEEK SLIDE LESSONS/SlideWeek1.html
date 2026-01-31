@@ -160,13 +160,37 @@
     <script src="APCSP PDF WEEK FILES/SCRIPTS/GeneralSlides.js"></script>
 
     <script>
-        // Auto-click WEEK 1 button when page loads
+        // Track if auto-extraction has been triggered
+        let autoExtractTriggered = false;
+        
+        // Function to check if extraction is complete and trigger auto-extract
+        function checkAndAutoExtract() {
+            const extractBtn = document.getElementById('extract-week-1-btn');
+            
+            // Check if extract button is enabled (means extraction is complete)
+            if (extractBtn && !extractBtn.disabled && !autoExtractTriggered) {
+                autoExtractTriggered = true;
+                console.log('Auto-extracting Week 1 content...');
+                extractBtn.click();
+            } else if (extractBtn && extractBtn.disabled) {
+                // If still disabled, check again in 1 second
+                setTimeout(checkAndAutoExtract, 1000);
+            }
+        }
+        
+        // Auto-click WEEK 1 button and then auto-extract when page loads
         window.addEventListener('DOMContentLoaded', function() {
             // Small delay to ensure all scripts are loaded
             setTimeout(() => {
                 const week1Button = document.querySelector('[onclick="loadWeekPDF(1)"]');
                 if (week1Button) {
+                    console.log('Auto-loading Week 1 PDF...');
                     week1Button.click();
+                    
+                    // Start checking for extraction completion after 3 seconds
+                    setTimeout(() => {
+                        checkAndAutoExtract();
+                    }, 3000);
                 }
             }, 1000);
         });
@@ -293,3 +317,4 @@ function downloadImageInModal(pageNum, index) {
 
 </body>
 </html>
+
