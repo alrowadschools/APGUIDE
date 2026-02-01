@@ -1949,7 +1949,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // Fallback: hide loader after 10 seconds
 setTimeout(() => {
     hideLoader();
-}, 2000);
+}, 20000);
+
 
 
 
