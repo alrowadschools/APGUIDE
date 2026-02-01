@@ -1943,13 +1943,14 @@ document.addEventListener('DOMContentLoaded', () => {
     showLoader();
     
     // Initialize app after a short delay to ensure all elements are available
-    setTimeout(initializeApp, 100);
+    setTimeout(initializeApp, 1000);
 });
 
 // Fallback: hide loader after 10 seconds
 setTimeout(() => {
     hideLoader();
 }, 2000);
+
 
 
 
